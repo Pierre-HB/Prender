@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Fichiers sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Fichiers de ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Fichiers sources\glad">
+      <UniqueIdentifier>{b72d6bb4-45e2-4132-b0c9-6bb69470e134}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\buffers">
+      <UniqueIdentifier>{11bf51ec-54e4-434f-9870-eb5d9c8d3d5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\shaders">
+      <UniqueIdentifier>{062e7c9f-32db-4bd1-8f10-4d0527aaecfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\scenes">
+      <UniqueIdentifier>{5907e6ac-aeaf-4dd3-a02e-a17dffbb714f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\algebra">
+      <UniqueIdentifier>{c92d72b7-4fae-4cc4-a773-2258b82fb04a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\buffers">
+      <UniqueIdentifier>{ee9df326-52ae-4973-8c57-cc2ebb503a8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\algebra">
+      <UniqueIdentifier>{64cd88e0-2cb0-4ac6-9fe6-eb2dd357833e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\utils">
+      <UniqueIdentifier>{fa5843dd-2a08-46d6-ada0-b7ee1d91791f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\scene">
+      <UniqueIdentifier>{d5fbc741-4f4d-4d83-b8b9-cc42334e6d4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\utils">
+      <UniqueIdentifier>{b3bb7c2a-2680-46bb-a792-354a90fe3956}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\object">
+      <UniqueIdentifier>{5556e5b0-3772-4b6c-96e1-defaa647e6c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\object">
+      <UniqueIdentifier>{a1c6db7c-9fe5-4cc2-b797-6e4601a35469}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\imgui">
+      <UniqueIdentifier>{9881bacb-9a08-4502-bee6-ab337a003d63}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\glad.c">
+      <Filter>Fichiers sources\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\buffers\EOB.cpp">
+      <Filter>Fichiers sources\buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\buffers\VAO.cpp">
+      <Filter>Fichiers sources\buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\buffers\VBO.cpp">
+      <Filter>Fichiers sources\buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scenes\Scene.cpp">
+      <Filter>Fichiers sources\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scenes\BasicScene.cpp">
+      <Filter>Fichiers sources\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\algebra\Matrix2.cpp">
+      <Filter>Fichiers sources\algebra</Filter>
+    </ClCompile>
+    <ClCompile Include="src\algebra\Matrix3.cpp">
+      <Filter>Fichiers sources\algebra</Filter>
+    </ClCompile>
+    <ClCompile Include="src\algebra\Matrix4.cpp">
+      <Filter>Fichiers sources\algebra</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\Texture.cpp">
+      <Filter>Fichiers sources\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\Camera.cpp">
+      <Filter>Fichiers sources\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\PerspectiveCamera.cpp">
+      <Filter>Fichiers sources\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\object\Object3D.cpp">
+      <Filter>Fichiers sources\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\object\Object3D_P_N_UV.cpp">
+      <Filter>Fichiers sources\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui.cpp">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_demo.cpp">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_draw.cpp">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_tables.cpp">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_widgets.cpp">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_impl_glfw.cpp">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\externals\includes\glad\glad.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="..\externals\includes\KHR\khrplatform.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="..\externals\includes\GLFW\glfw3.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="..\externals\includes\GLFW\glfw3native.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="..\externals\includes\stb_image.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\buffers\EOB.h">
+      <Filter>Fichiers d%27en-tête\buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\buffers\VAO.h">
+      <Filter>Fichiers d%27en-tête\buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\buffers\VBO.h">
+      <Filter>Fichiers d%27en-tête\buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\algebra\Algebra.h">
+      <Filter>Fichiers d%27en-tête\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="src\algebra\Vector.h">
+      <Filter>Fichiers d%27en-tête\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="src\algebra\Matrix2.h">
+      <Filter>Fichiers d%27en-tête\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="src\algebra\Matrix3.h">
+      <Filter>Fichiers d%27en-tête\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="src\algebra\Matrix4.h">
+      <Filter>Fichiers d%27en-tête\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Texture.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\Scene.h">
+      <Filter>Fichiers d%27en-tête\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\BasicScene.h">
+      <Filter>Fichiers d%27en-tête\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Camera.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\PerspectiveCamera.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\object\Object3D.h">
+      <Filter>Fichiers d%27en-tête\object</Filter>
+    </ClInclude>
+    <ClInclude Include="src\object\Object3D_P_N_UV.h">
+      <Filter>Fichiers d%27en-tête\object</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imgui\imconfig.h">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imgui\imgui.h">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imgui\imgui_internal.h">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imgui\imstb_rectpack.h">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imgui\imstb_textedit.h">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imgui\imstb_truetype.h">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imgui\imgui_impl_glfw.h">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imgui\imgui_impl_opengl3.h">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Fichiers sources\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\fragmentShader.glsl">
+      <Filter>Fichiers sources\shaders</Filter>
+    </None>
+    <None Include="src\shaders\vertexShader.glsl">
+      <Filter>Fichiers sources\shaders</Filter>
+    </None>
+    <None Include="src\shaders\vertexUVShader.glsl">
+      <Filter>Fichiers sources\shaders</Filter>
+    </None>
+    <None Include="src\shaders\fragmentUVShader.glsl">
+      <Filter>Fichiers sources\shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>
