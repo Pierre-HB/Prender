@@ -153,7 +153,7 @@ Shader::~Shader() {
 	glDeleteProgram(program);
 }
 
-void Shader::use() {
+void Shader::use() const {
 	//don't reload the shader if it is already loaded to save time
 	if (Shader::loadedShader != shaderType) {
 		Shader::loadedShader = shaderType;
@@ -161,6 +161,10 @@ void Shader::use() {
 		std::cout << "loaded shader " << shaderType << std::endl;
 	}
 	
+}
+
+ShaderType Shader::getShaderType() const {
+	return shaderType;
 }
 
 void Shader::setUniform(const std::string& name, bool value) const {

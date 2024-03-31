@@ -29,7 +29,7 @@ void BasicScene::render() {
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     shader_test->use();
-    object->setup(shader_test, camera->getProjectionMatrix() * camera->getViewMatrix(), camera->getViewMatrix());
+    object->setup(shader_test, camera->getProjectionMatrix(), camera->getViewMatrix());
 
     texture_smiley->bind();
     shader_test->setUniform("smiley", 1);

@@ -52,7 +52,10 @@ public:
     ~Shader();
 
     //! use the shader
-    void use();
+    void use() const;
+
+    //! get the shader type
+    ShaderType getShaderType() const;
 
     //! uniform loading
     //! Load a bool

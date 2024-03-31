@@ -93,12 +93,21 @@ Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(t
 
 }
 
-void Object3D_P_N_UV::setup(Shader* shader, const mat4& vp, const mat4& v) {
-	vao->bind();
-	texture->bind();
-	shader->setUniform("ourTexture", 0);
-	shader->setUniform("mvp", vp * world);
-	shader->setUniform("mv_n", normalTransformation(v*world));
+void Object3D_P_N_UV::setup(Shader* shader, const mat4& p, const mat4& v) {
+	switch (shader->getShaderType())
+	{
+	case ShaderType::DEFAULT_P_N_UV:
+		vao->bind();
+		texture->bind();
+		shader->setUniform("ourTexture", 0);
+		shader->setUniform("mvp", p * v * world * object);
+		shader->setUniform("mv", v * world * object);
+		shader->setUniform("mv_n", normalTransformation(v * world * object));
+		break;
+	default:
+		std::cout << "[WARNING] Setup of Object3D_P_N_UV with shader " << shader->getShaderType() << " no setup is performed." << std::endl;
+		break;
+	}
 }
 
 void Object3D_P_N_UV::draw() {

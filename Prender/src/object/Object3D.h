@@ -7,12 +7,13 @@ class Object3D
 {
 protected:
 
+	mat4 object;
 	mat4 world;
 	VAO* vao;
 
 public:
 
-	Object3D() : world(mat4::identity()) {
+	Object3D() : object(mat4::identity()), world(mat4::identity()) {
 		vao = new VAO();
 	}
 
