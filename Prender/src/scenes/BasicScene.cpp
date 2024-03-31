@@ -8,8 +8,6 @@ BasicScene::BasicScene() {
     texture = new Texture("container.jpg", 0);
     texture_smiley = new Texture("awesomeface.png", 1);
 
-    //Shader shader_test = Shader("src/shaders/vertexShader.glsl", "src/shaders/fragmentShader.glsl");
-    //shader_test = new Shader("src/shaders/vertexUVShader.glsl", "src/shaders/fragmentUVShader.glsl");
     shader_test = new Shader(DEFAULT_P_N_UV);
     
     camera = new PerspectiveCamera(800.0f / 600.0f, 3.14f/2, 0.1f, 1000.0f);
@@ -42,7 +40,18 @@ void BasicScene::render() {
 }
 
 void BasicScene::update(Engine* engine) {
-    float a = static_cast<float>(2 * 3.1415 / (10 * engine->get_tps()));
+    float a = static_cast<float>(2 * 3.1415 / (10 * engine->get_tps())); // 1/10 tour/s
+    float s = static_cast<float>(2 / (engine->get_tps())); // 1m/s
 
     object->moove(rotationMatrixY(a));
+    if (engine->currentKeyState->forward) 
+        camera->moveView(translationMatrix(vec3(0, 0, -s)));
+    if (engine->currentKeyState->backward)
+        camera->moveView(translationMatrix(vec3(0, 0, s)));
+    if (engine->currentKeyState->left)
+        camera->moveView(translationMatrix(vec3(-s, 0, 0)));
+    if (engine->currentKeyState->right)
+        camera->moveView(translationMatrix(vec3(s, 0, 0)));
+    
+        
 }

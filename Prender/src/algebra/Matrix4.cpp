@@ -242,6 +242,13 @@ mat4 inverse(const mat4& m) {
     return tmp * invdet;
 }
 
+mat4 rotationMatrixX(float a) {
+    return mat4(1, 0, 0, 0,
+                0, cos(a), -sin(a), 0,
+                0, sin(a), cos(a), 0,
+                0, 0, 0, 1);
+}
+
 mat4 rotationMatrixY(float a) {
     return mat4(cos(a),     0,   sin(a),     0,
                 0,          1,  0,          0,
@@ -249,10 +256,31 @@ mat4 rotationMatrixY(float a) {
                 0,          0,  0,          1);
 }
 
+mat4 rotationMatrixZ(float a) {
+    return mat4(cos(a), -sin(a), 0, 0,
+                sin(a), cos(a), 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1);
+}
+
 mat4 translationMatrix(const vec3& v) {
     return mat4(1, 0, 0, v.x,
                 0, 1, 0, v.y,
                 0, 0, 1, v.z,
+                0, 0, 0, 1);
+}
+
+mat4 scaleMatrix(float s) {
+    return mat4(s, 0, 0, 0,
+                0, s, 0, 0,
+                0, 0, s, 0,
+                0, 0, 0, 1);
+}
+
+mat4 scaleMatrix(float sX, float sY, float sZ) {
+    return mat4(sX, 0, 0, 0,
+                0, sY, 0, 0,
+                0, 0, sZ, 0,
                 0, 0, 0, 1);
 }
 

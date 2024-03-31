@@ -75,6 +75,11 @@
     <ExternalIncludePath>C:\Users\pierr\Desktop\Prender\externals\includes;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>C:\Users\pierr\Desktop\Prender\externals\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\Users\pierr\Desktop\Prender\externals\includes;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>C:\Users\pierr\Desktop\Prender\externals\includes;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>C:\Users\pierr\Desktop\Prender\externals\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -128,10 +133,11 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>NotSet</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

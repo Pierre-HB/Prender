@@ -100,12 +100,24 @@ mat4 inverse(const mat4& m);
 //! Transformation matrix for he normals (so that normals stay perpendicular to the surface)
 mat4 normalTransformation(const mat4& m);
 
-
+//! rotation of a radian around the X axis
+mat4 rotationMatrixX(float a);
 
 //! rotation of a radian around the Y axis
 mat4 rotationMatrixY(float a);
 
+//! rotation of a radian around the Z axis
+mat4 rotationMatrixZ(float a);
+
+//! translation by a vector v
 mat4 translationMatrix(const vec3& v);
+
+//! uniform scale of s
+mat4 scaleMatrix(float s);
+
+//! non uniform scale of (sX, sY, sZ)
+mat4 scaleMatrix(float sX, float sY, float sZ);
+
 //! viewport matrix
 //mat4 viewPort(int width, int height);
 
@@ -117,12 +129,7 @@ mat4 translationMatrix(const vec3& v);
 
 //projection ortogonal
 
-//scale
-
-//scale X, ...
-//translate
-// rptate around a vector v
-//rotate X, ...
+// rotate around a vector v
 
 
 

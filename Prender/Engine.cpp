@@ -113,6 +113,9 @@ Engine::Engine() : activeScene(0), start(), nextRender(), nextUpdate() {
     fps = 60;
     tps = 250;
 
+    maxMissedFrames = static_cast<int>(0.1*fps);
+    maxMissedTicks = static_cast<int>(2*tps);
+
     glfwSwapInterval(0);//no vsync (not working)
 }
 
@@ -144,7 +147,6 @@ void Engine::update() {
 }
 
 void Engine::render() {
-    //std::cout << "render" << std::endl;
 
 #ifdef IMGUI
     ImGui_ImplOpenGL3_NewFrame();
@@ -157,6 +159,11 @@ void Engine::render() {
 
 #ifdef IMGUI
     //ImGui::ShowDemoWindow();
+    ImGui::Begin("Debug");
+    ImGui::Text("FPS : %d, TPS : %d", timeData.fps, timeData.tps);
+    ImGui::Text("Time (ms) | idle : %3.0lf, render : %3.0lf, update : %3.0lf", timeData.sleepedTimeLastSecond * 1000, timeData.renderTimeLastSecond * 1000, timeData.updateTimeLastSecond * 1000);
+    ImGui::Text("Time per Tick : %3.2lfms, time per Frame : %3.2lfms", timeData.updateTimeLastSecond * 1000/static_cast<double>(timeData.tps), timeData.renderTimeLastSecond * 1000 / static_cast<double>(timeData.fps));
+    ImGui::End();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
@@ -169,7 +176,7 @@ void Engine::run() {
     nextRender = start + 1 / fps;
     nextUpdate = start + 1 / tps;
 
-    TimeData timeData = TimeData(start);
+    timeData = TimeData(start);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -179,32 +186,47 @@ void Engine::run() {
             timeData.fps = static_cast<int>(timeData.framesLastSecond / dt);
             timeData.tps = static_cast<int>(timeData.ticksLastSecond / dt);
             timeData.sleepedTimeLastSecond = timeData.sleepedTime / dt;
+            timeData.renderTimeLastSecond = timeData.renderTime / dt;
+            timeData.updateTimeLastSecond = timeData.updateTime / dt;
             timeData.framesLastSecond = 0;
             timeData.ticksLastSecond = 0;
             timeData.sleepedTime = 0;
+            timeData.renderTime = 0;
+            timeData.updateTime = 0;
             timeData.lastSecond = start;
-            //std::cout << "FPS : " << timeData.fps << ", TPS : " << timeData.tps << ", sleeped seconds : " << timeData.sleepedTimeLastSecond << ", dt : " << dt << std::endl;
         }
+
+        if (timeData.lastLoopAction == TimeData::UPDATE)
+            timeData.updateTime += start - timeData.lastStart;
+        else if (timeData.lastLoopAction == TimeData::RENDER)
+            timeData.renderTime += start - timeData.lastStart;
+        else if (timeData.lastLoopAction == TimeData::IDLE)
+            timeData.sleepedTime += start - timeData.lastStart;
 
         if (start >= nextUpdate) {
             update();
-            nextUpdate += 1 / tps;
+            nextUpdate = std::max(nextUpdate, start-maxMissedTicks/tps) + 1 / tps;
             timeData.ticksLastSecond++;
+            //timeData.updateTime += glfwGetTime() - start;
+            timeData.lastLoopAction = TimeData::RENDER;
             //next update does not take into acount the start time. This ensure stability
             //WARNING The computer MUST be able to perform the updates quick enough, otherwise delay will accumulate and there will never be any render
         }
         else if (start >= nextRender) {
             render();
-            nextRender = start + 1 / fps;
+            nextRender = std::max(nextRender, start-maxMissedFrames/fps) + 1 / fps;
             timeData.framesLastSecond++;
+            //timeData.renderTime += glfwGetTime() - start;
+            timeData.lastLoopAction = TimeData::UPDATE;
             //next render take into acount the start time. This avoid accumulating delay 
         }
         else {
             Time wait = std::min(nextRender, nextUpdate) - start;
-            //std::cout << wait << std::endl;
-            timeData.sleepedTime += wait;
+            //timeData.sleepedTime += wait;
             std::this_thread::sleep_for(std::chrono::microseconds(static_cast<long long>(wait*1000000)));//wait is in second
+            timeData.lastLoopAction = TimeData::IDLE;
         }
+        timeData.lastStart = start;
     }
 }
 

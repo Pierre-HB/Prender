@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../main.h"
 #include "../algebra/Algebra.h"
 class Camera
 {
