@@ -6,6 +6,65 @@
 #include <sstream>
 #include <iostream>
 
+//! initialise the used shader
+ShaderType Shader::loadedShader = ShaderType::NO_SHADER;
+
+usedShader get_used_shader(ShaderType shader) {
+	switch (shader)
+	{
+	case NO_SHADER:
+		return usedShader(false, false, false, false);
+	case DEFAULT_P_N_UV:
+		return usedShader(true, false, true, false);
+	}
+}
+
+const char* get_vertex_shader(ShaderType shader) {
+	switch (shader)
+	{
+	case NO_SHADER:
+		return "";
+	case DEFAULT_P_N_UV:
+		return "src/shaders/vertexUVShader.glsl";
+		//no default case because every enum type is tested
+	}
+}
+
+const char* get_geometry_shader(ShaderType shader) {
+	switch (shader)
+	{
+	case NO_SHADER:
+		return "";
+	case DEFAULT_P_N_UV:
+		return "";
+		//no default case because every enum type is tested
+	}
+}
+
+const char* get_fragment_shader(ShaderType shader) {
+	switch (shader)
+	{
+	case NO_SHADER:
+		return "";
+	case DEFAULT_P_N_UV:
+		return "src/shaders/fragmentUVShader.glsl";
+		//no default case because every enum type is tested
+	}
+}
+
+const char* get_compute_shader(ShaderType shader) {
+	switch (shader)
+	{
+	case NO_SHADER:
+		return "";
+	case DEFAULT_P_N_UV:
+		return "";
+		//no default case because every enum type is tested
+	}
+}
+
+
+
 std::string Shader::readFile(const char* file) const {
 	std::ifstream inputStream;
 	std::stringstream stream;
@@ -22,54 +81,72 @@ std::string Shader::readFile(const char* file) const {
 	return stream.str();
 }
 
-Shader::Shader(const char* vertexShader, const char* fragmentShader) 
-{
-	//Vertex shader
-	std::string vertexString = readFile(vertexShader);
-	const GLchar* vertexShaderCode = vertexString.c_str();
+GLuint Shader::compileShader(const char* file, GLenum shader) {
+	GLuint shaderID;
+	std::string shaderString = readFile(file);
+	const GLchar* shaderCode = shaderString.c_str();
 
-	GLuint vertexShaderID;
-	vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShaderID, 1, &vertexShaderCode, NULL);
-	glCompileShader(vertexShaderID);
+	shaderID = glCreateShader(shader);
+	glShaderSource(shaderID, 1, &shaderCode, NULL);
+	glCompileShader(shaderID);
 
 	int success;
 	char infoLog[512];
-	glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
 	if (!success) {
-		glGetShaderInfoLog(vertexShaderID, 512, NULL, infoLog);
-		std::cout << "[ERROR] at compilation of vertexShader" << std::endl << infoLog << std::endl;
+		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
+		std::cout << "[ERROR] at compilation of shader : " << file << std::endl << infoLog << std::endl;
 	}
-
-	//Fragment shader
-	std::string fragmentString = readFile(fragmentShader);
-	const GLchar* fragmentShaderCode = fragmentString.c_str();
-
+	return shaderID;
+}
+Shader::Shader(ShaderType shaderType) : shaderType(shaderType)
+{
+	GLuint vertexShaderID;
+	GLuint geometryShaderID;
 	GLuint fragmentShaderID;
-	fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShaderID, 1, &fragmentShaderCode, NULL);
-	glCompileShader(fragmentShaderID);
+	GLuint computeShaderID;
 
-	glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(fragmentShaderID, 512, NULL, infoLog);
-		std::cout << "[ERROR] at compilation of fragmentShader" << std::endl << infoLog << std::endl;
-	}
-
-	//Linking
+	usedShader used_shader = get_used_shader(shaderType);
 	program = glCreateProgram();
 
-	glAttachShader(program, vertexShaderID);
-	glAttachShader(program, fragmentShaderID);
+	if (used_shader.vertexShader) {
+		vertexShaderID = compileShader(get_vertex_shader(shaderType), GL_VERTEX_SHADER);
+		glAttachShader(program, vertexShaderID);
+	}
+
+	if (used_shader.geometryShader) {
+		geometryShaderID = compileShader(get_geometry_shader(shaderType), GL_GEOMETRY_SHADER);
+		glAttachShader(program, geometryShaderID);
+	}
+
+	if (used_shader.fragmentShader) {
+		fragmentShaderID = compileShader(get_fragment_shader(shaderType), GL_FRAGMENT_SHADER);
+		glAttachShader(program, fragmentShaderID);
+	}
+
+	if (used_shader.computeShader) {
+		computeShaderID = compileShader(get_compute_shader(shaderType), GL_COMPUTE_SHADER);
+		glAttachShader(program, computeShaderID);
+	}
+		
 	glLinkProgram(program);
 
+	int success;
+	char infoLog[512];
 	glGetShaderiv(program, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(program, 512, NULL, infoLog);
 		std::cout << "[ERROR] Linking of shader" << std::endl << infoLog << std::endl;
 	}
-	glDeleteShader(vertexShaderID);
-	glDeleteShader(fragmentShaderID);
+
+	if(used_shader.vertexShader)
+		glDeleteShader(vertexShaderID);
+	if(used_shader.geometryShader)
+		glDeleteShader(geometryShaderID);
+	if(used_shader.fragmentShader)
+		glDeleteShader(fragmentShaderID);
+	if(used_shader.computeShader)
+		glDeleteShader(computeShaderID);
 }
 
 Shader::~Shader() {
@@ -77,7 +154,13 @@ Shader::~Shader() {
 }
 
 void Shader::use() {
-	glUseProgram(program);
+	//don't reload the shader if it is already loaded to save time
+	if (Shader::loadedShader != shaderType) {
+		Shader::loadedShader = shaderType;
+		glUseProgram(program);
+		std::cout << "loaded shader " << shaderType << std::endl;
+	}
+	
 }
 
 void Shader::setUniform(const std::string& name, bool value) const {

@@ -4,16 +4,49 @@
 #include <string>
 #include "src/algebra/Algebra.h"
 
+
+enum ShaderType { NO_SHADER, DEFAULT_P_N_UV };
+
+struct usedShader
+{
+    bool vertexShader;
+    bool geometryShader;
+    bool fragmentShader;
+    bool computeShader;
+
+    usedShader(bool useVertexShader, bool useGeometryShader, bool useFragmentShader, bool useComputeShader) : vertexShader(useVertexShader), geometryShader(useGeometryShader), fragmentShader(useFragmentShader), computeShader(useComputeShader) {}
+
+};
+usedShader get_used_shader(ShaderType shader);
+
+
+const char* get_vertex_shader(ShaderType shader);
+
+const char* get_geometry_shader(ShaderType shader);
+
+const char* get_fragment_shader(ShaderType shader);
+
+const char* get_compute_shader(ShaderType shader);
+
+
 class Shader
 {
 private:
+
     GLuint program;
 
+    static ShaderType loadedShader;
+
+    ShaderType shaderType;
+
     std::string readFile(const char* file) const;
+
+    GLuint compileShader(const char* file, GLenum shader);
+
 public:
 
     //! constructor from a vertex and fragment shader
-    Shader(const char* vertexShader, const char* fragmentShader);
+    Shader(ShaderType shaderType);
 
     //! destructor
     ~Shader();

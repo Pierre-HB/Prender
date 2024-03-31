@@ -9,7 +9,8 @@ BasicScene::BasicScene() {
     texture_smiley = new Texture("awesomeface.png", 1);
 
     //Shader shader_test = Shader("src/shaders/vertexShader.glsl", "src/shaders/fragmentShader.glsl");
-    shader_test = new Shader("src/shaders/vertexUVShader.glsl", "src/shaders/fragmentUVShader.glsl");
+    //shader_test = new Shader("src/shaders/vertexUVShader.glsl", "src/shaders/fragmentUVShader.glsl");
+    shader_test = new Shader(DEFAULT_P_N_UV);
     
     camera = new PerspectiveCamera(800.0f / 600.0f, 3.14f/2, 0.1f, 1000.0f);
     camera->moveWorld(translationMatrix(vec3(0, 0, 30)));
