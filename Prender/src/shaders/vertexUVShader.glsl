@@ -10,7 +10,6 @@ uniform mat4 mv_n;
 
 out vec2 uv;
 out vec3 n;
-out vec3 cameraPos;
 out vec3 pos;
 
 void main()
@@ -26,5 +25,4 @@ void main()
 
    vec4 camera = inverse(mvp)*vec4(0, 0, 0, 1);
    //cameraPos = camera.xyz/camera.w;
-   cameraPos = vec3(0, 0, 0);
 };

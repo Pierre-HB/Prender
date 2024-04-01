@@ -52,6 +52,12 @@
     <Filter Include="Fichiers sources\imgui">
       <UniqueIdentifier>{9881bacb-9a08-4502-bee6-ab337a003d63}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\light">
+      <UniqueIdentifier>{d19e1850-b471-4999-a6be-b359abcb0bd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\light">
+      <UniqueIdentifier>{98471520-a2bf-4ecb-8fe8-59f2c49a3111}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -125,6 +131,12 @@
     </ClCompile>
     <ClCompile Include="src\imgui\imgui_impl_opengl3.cpp">
       <Filter>Fichiers sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\light\Light.cpp">
+      <Filter>Fichiers sources\light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\light\Light_Constant_Point.cpp">
+      <Filter>Fichiers sources\light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +235,12 @@
     </ClInclude>
     <ClInclude Include="main.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\light\Light.h">
+      <Filter>Fichiers d%27en-tête\light</Filter>
+    </ClInclude>
+    <ClInclude Include="src\light\Light_Constant_Point.h">
+      <Filter>Fichiers d%27en-tête\light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

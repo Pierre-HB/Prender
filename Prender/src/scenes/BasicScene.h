@@ -17,6 +17,9 @@ private:
 	PerspectiveCamera* camera;
 	Object3D_P_N_UV* object;
 
+	LightManager* lightManager;
+
+
 public:
 	BasicScene();
 

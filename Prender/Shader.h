@@ -1,5 +1,6 @@
 #pragma once
 
+#include "main.h"
 #include <glad/glad.h>
 #include <string>
 #include "src/algebra/Algebra.h"
@@ -56,6 +57,9 @@ public:
 
     //! get the shader type
     ShaderType getShaderType() const;
+
+    //! return the id of the shader
+    GLuint getID() const;
 
     //! uniform loading
     //! Load a bool

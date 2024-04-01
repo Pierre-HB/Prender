@@ -100,6 +100,8 @@ void Object3D_P_N_UV::setup(Shader* shader, const mat4& p, const mat4& v) {
 		vao->bind();
 		texture->bind();
 		shader->setUniform("ourTexture", 0);
+		
+		shader->setUniform("lightCasterID", lightCasterID, 5);
 		shader->setUniform("mvp", p * v * world * object);
 		shader->setUniform("mv", v * world * object);
 		shader->setUniform("mv_n", normalTransformation(v * world * object));
@@ -112,4 +114,37 @@ void Object3D_P_N_UV::setup(Shader* shader, const mat4& p, const mat4& v) {
 
 void Object3D_P_N_UV::draw() {
 	glDrawElements(GL_TRIANGLES, nb_vertex, GL_UNSIGNED_INT, 0);
+}
+
+void Object3D_P_N_UV::setLightCasterID(const std::vector<lightCaster>& lightCasters) {
+	//lightCasterID[i];
+	mat4 inv_ow = inverse(world * object);
+	float best_intensity[maxLight]{};
+	for (int i = 0; i < maxLight; i++) {
+		best_intensity[i] = -1.0f;
+		lightCasterID[i] = -1;
+	}
+		
+
+	lightCaster best_lights[maxLight];
+	for (size_t i = 0; i < lightCasters.size(); i++) {
+		if (lightCasters[i].falloff < 0)
+			continue;
+		float d = lightCasters[i].falloff == 0.0f ? 1 : length(inv_ow * lightCasters[i].position); //if falloff = 0 d has no importance. avoid computing d for light at infinity
+		float intensity = dot(lightCasters[i].lightColor, vec3(0.25, 0.5, 0.25)) / powf(d, lightCasters[i].falloff);
+		int intensityIndex = i;
+		for (int j = 0; j < maxLight; j++) {
+			if (best_intensity[j] < intensity) {
+				//swap intensity
+				float tmp = intensity;
+				intensity = best_intensity[j];
+				best_intensity[j] = tmp;
+				
+				//swap the index
+				int tmp_i = intensityIndex;
+				intensityIndex = lightCasterID[j];
+				lightCasterID[j] = tmp_i;
+			}
+		}
+	}
 }

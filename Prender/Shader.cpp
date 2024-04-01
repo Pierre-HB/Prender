@@ -130,7 +130,6 @@ Shader::Shader(ShaderType shaderType) : shaderType(shaderType)
 	}
 		
 	glLinkProgram(program);
-
 	int success;
 	char infoLog[512];
 	glGetShaderiv(program, GL_LINK_STATUS, &success);
@@ -165,6 +164,10 @@ void Shader::use() const {
 
 ShaderType Shader::getShaderType() const {
 	return shaderType;
+}
+
+GLuint Shader::getID() const {
+	return program;
 }
 
 void Shader::setUniform(const std::string& name, bool value) const {
