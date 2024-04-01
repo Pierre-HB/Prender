@@ -83,6 +83,10 @@ private:
 
 	keyStates* previousKeyState; //previous actions states
 
+#ifdef IMGUI
+	ImGuiManager* imGuiManager;
+#endif
+
 public:
 	keyStates* currentKeyState; // currente action state
 	keyStates* toggleKeyState; // if the action is active and was inactive the previous frame

@@ -108,6 +108,7 @@ Engine::Engine() : activeScene(0), start(), nextRender(), nextUpdate() {
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 130");
+    imGuiManager = new ImGuiManager();
 #endif
 
     fps = 60;
@@ -124,6 +125,7 @@ Engine::~Engine() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+    delete imGuiManager;
 #endif
 
     glfwDestroyWindow(window);
@@ -138,12 +140,19 @@ Engine::~Engine() {
 
 void Engine::update() {
     //std::cout << "update" << std::endl;
+#ifdef IMGUI
+    imGuiManager->setAttributes();
+#endif
 
     glfwPollEvents();
     updateInput();
 
     processInput(window);
     scenes[activeScene]->update(this);
+
+#ifdef IMGUI
+    imGuiManager->updateAttributes();
+#endif
 }
 
 void Engine::render() {
@@ -159,6 +168,7 @@ void Engine::render() {
 
 #ifdef IMGUI
     //ImGui::ShowDemoWindow();
+    imGuiManager->render();
     ImGui::Begin("Debug");
     ImGui::Text("FPS : %d, TPS : %d", timeData.fps, timeData.tps);
     ImGui::Text("Time (ms) | idle : %3.0lf, render : %3.0lf, update : %3.0lf", timeData.sleepedTimeLastSecond * 1000, timeData.renderTimeLastSecond * 1000, timeData.updateTimeLastSecond * 1000);

@@ -67,6 +67,16 @@ void BasicScene::update(Engine* engine) {
         camera->moveView(translationMatrix(vec3(-s, 0, 0)));
     if (engine->currentKeyState->right)
         camera->moveView(translationMatrix(vec3(s, 0, 0)));
+
+    if (engine->toggleKeyState->forward) {
+        std::vector<Light*> lights = lightManager->getLights();
+        std::cout << lights.size() << " light alive" << std::endl;
+        lightManager->removeLight(lights[0]);
+
+        lights = lightManager->getLights();
+        std::cout << lights.size() << " light alive after" << std::endl;
+    }
+        
     
         
 }

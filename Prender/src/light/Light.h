@@ -25,7 +25,8 @@ struct lightCaster
 
 };
 
-class Light 
+
+class Light
 {
 protected:
 
@@ -49,7 +50,7 @@ public:
 	//! default light constructor
 	Light(const vec3& lightColor, float falloff, const vec3& position, float cos_angle_min, const vec3& direction, float cos_angle_max);
 
-	~Light();
+	virtual ~Light();
 
 	//! return the lighCaster to load in OpenGL
 	virtual lightCaster getLightCaster() const;
@@ -73,6 +74,8 @@ public:
 	void addLight(Light* light);
 
 	void removeLight(Light* light);
+
+	std::vector<Light*> getLights();
 
 	void setAmbiantColor(const vec4& color);
 

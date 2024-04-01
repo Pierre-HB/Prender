@@ -9,7 +9,7 @@ public:
 
 	Scene();
 
-	~Scene();
+	virtual ~Scene();
 
 	virtual void render();
 

@@ -17,7 +17,7 @@ public:
 		vao = new VAO();
 	}
 
-	~Object3D() {
+	virtual ~Object3D() {
 
 	}
 

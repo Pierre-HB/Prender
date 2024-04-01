@@ -9,7 +9,7 @@ Light::Light() : lightColor(), falloff(-1.0f), position(), cos_angle_min(), dire
 }
 
 Light::~Light() {
-
+    std::cout << "destruction of light" << std::endl;
 }
 
 lightCaster Light::getLightCaster() const {
@@ -40,7 +40,20 @@ void LightManager::addLight(Light* light) {
 
 //! TO TEST
 void LightManager::removeLight(Light* light) {
-    remove(lights.begin(), lights.end(), light);
+    std::cout << "remove light. initial : " << lights.size();
+    for (size_t i = 0; i < lights.size(); i++) {
+        if (lights[i] == light) {
+            delete lights[i];
+            lights.erase(lights.begin() + i);
+            break;
+        }
+    }
+    //remove(lights.begin(), lights.end(), light);
+    std::cout << " final : " << lights.size() << std::endl;
+}
+
+std::vector<Light*> LightManager::getLights() {
+    return lights;
 }
 
 void LightManager::setAmbiantColor(const vec4& color) {

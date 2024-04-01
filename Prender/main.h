@@ -5,6 +5,7 @@
 
 #ifdef IMGUI
 #include "src/imgui/imgui.h"
+#include "ImGuiManager.h"
 #endif
 
 #ifdef CONSOLE
