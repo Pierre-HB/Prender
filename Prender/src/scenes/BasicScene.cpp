@@ -23,6 +23,9 @@ BasicScene::BasicScene() {
     lightManager->addLight(new Light_Constant_Point(vec3(0.8, 1, 0.5), vec3(0, 10, -15)));
     lightManager->addLight(new Light_Constant_Point(vec3(0.1, 0.5, 1), vec3(0, -10, -15)));
     lightManager->addLight(new Light_Constant_Point(vec3(1, 0.5, 0.1), vec3(-15, -10, -15)));
+
+    transfo = new ImGuiTransformationAttr(transformationMatrix(vec3(1, 2, 3), vec3(8, 5, 3), vec3(-7, 42, 8)));
+
 }
 
 BasicScene::~BasicScene() {
@@ -52,6 +55,9 @@ void BasicScene::render() {
     shader_test->setUniform("smiley", 1);
 
     object->draw();
+
+    imGuiPrintAttribute(transfo);
+
 }
 
 void BasicScene::update(Engine* engine) {

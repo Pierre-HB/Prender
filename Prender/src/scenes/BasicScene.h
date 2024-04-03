@@ -19,6 +19,9 @@ private:
 
 	LightManager* lightManager;
 
+	ImGuiTransformationAttr* transfo;
+
+
 
 public:
 	BasicScene();

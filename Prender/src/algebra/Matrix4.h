@@ -140,13 +140,20 @@ struct ImGuiTransformationAttr
 	mat4 OriginalRotation;// because it's unstable to get euler angle from a transformation, we keep the initial rotation as it is
 	vec3 rotations;
 
+	const char* name;
+
 	//! extract the translation, scale and rotation from a transformation
 	ImGuiTransformationAttr(const mat4& transformation);
+	ImGuiTransformationAttr(const mat4& transformation, const char* name);
+
+	//reset the attributes depending on the new transformation (without changing the rotations vector)
+	void extract_transormations(const mat4& transformation);
 
 	//! extract the translation, scale and rotation from a transformation close to the attributes
 	void updateAttr(const mat4& transformation);
-
 };
+
+void imGuiPrintAttribute(ImGuiTransformationAttr* transformAttr);
 #endif
 //! viewport matrix
 //mat4 viewPort(int width, int height);

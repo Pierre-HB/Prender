@@ -1,5 +1,7 @@
 #include "Matrix4.h"
 #include <iostream>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 std::ostream& operator<<(std::ostream& o, const mat4& m) {
 	o << "[" << m.c[0] << ", " << m.c[1] << ", " << m.c[2] << ", " << m.c[3] << " | " << m.c[4] << ", " << m.c[5] << ", " << m.c[6] << ", " << m.c[7] << " | " << m.c[8] << ", " << m.c[9] << ", " << m.c[10] << ", " << m.c[11] << " | " << m.c[12] << ", " << m.c[13] << ", " << m.c[14] << ", " << m.c[15] << "]";
@@ -333,15 +335,99 @@ mat4 transformationMatrix(const vec3& rotations, const vec3& scales, const vec3&
 
 #ifdef IMGUI
 
-ImGuiTransformationAttr::ImGuiTransformationAttr(const mat4& transformation) {
-    mat4 inv = inverse(transformation);
-    translation = -inv.extractTranslation();
+ImGuiTransformationAttr::ImGuiTransformationAttr(const mat4& transformation) : name("Transformation") {
+    extract_transormations(transformation);
+    rotations = vec3();
+}
+
+ImGuiTransformationAttr::ImGuiTransformationAttr(const mat4& transformation, const char* name) : name(name) {
+    extract_transormations(transformation);
+    rotations = vec3();
+}
+
+void ImGuiTransformationAttr::extract_transormations(const mat4& transformation) {
+    translation = -inverse(transformation).extractTranslation();
     OriginalRotation = transformation * translationMatrix(-translation);
     scales = OriginalRotation.extractScale();
     OriginalRotation = OriginalRotation * scaleMatrix(vec3(1 / scales.x, 1 / scales.y, 1 / scales.z));
     OriginalRotation = OriginalRotation.extractRotation(); //for stability
-    rotations = vec3();
 }
+
+void imGuiPrintAttribute(ImGuiTransformationAttr* transformAttr){
+    if (ImGui::TreeNode(transformAttr->name)) {
+        ImGui::PushItemWidth(75 * 3);
+        ImGui::DragFloat3(": translation", &(transformAttr->translation.x));
+        ImGui::PopItemWidth();
+
+        ImGui::PushItemWidth(75*3);
+        ImGui::DragFloat3(": scales", &(transformAttr->scales.x), 1, 1e-3, 1e10);
+        ImGui::PopItemWidth();
+
+        float x, y, z;
+        x = transformAttr->rotations.x;
+        y = transformAttr->rotations.y;
+        z = transformAttr->rotations.z;
+        ImGui::Text("Rotation :");
+
+        ImGui::Columns(2, "Rotation");
+
+        ImGui::PushItemWidth(75);
+        ImGui::DragFloat(" : x", &x);
+        ImGui::PopItemWidth();
+
+        ImGui::PushItemWidth(75);
+        ImGui::DragFloat(" : y", &y);
+        ImGui::PopItemWidth();
+
+        ImGui::PushItemWidth(75);
+        ImGui::DragFloat(" : z", &z);
+        ImGui::PopItemWidth();
+
+        ImGui::NextColumn();
+
+        static ImGuiTableFlags flags = ImGuiTableFlags_SizingFixedFit;
+
+        if (ImGui::BeginTable("Rot Matrix", 4, flags))
+        {
+            for (int i = 0; i < 4; i++) {
+                ImGui::TableNextRow();
+                for (int j = 0; j < 4; j++) {
+                    ImGui::TableSetColumnIndex(j);
+                    ImGui::Text("%1.2f", transformAttr->OriginalRotation.c[i * 4 + j]);
+                }
+            }
+            ImGui::EndTable();
+        }
+
+        ImGui::Columns(1);
+
+        float dx = x - transformAttr->rotations.x;
+        float dy = y - transformAttr->rotations.y;
+        float dz = z - transformAttr->rotations.z;
+
+        if (dx != 0.0f) {
+            transformAttr->rotations.x = x;
+            transformAttr->rotations.y = 0;
+            transformAttr->rotations.z = 0;
+            transformAttr->OriginalRotation = rotationMatrixX(dx * 2 * M_PI / 360) * transformAttr->OriginalRotation;
+        }
+        if (dy != 0.0f) {
+            transformAttr->rotations.x = 0;
+            transformAttr->rotations.y = y;
+            transformAttr->rotations.z = 0;
+            transformAttr->OriginalRotation = rotationMatrixY(dy * 2 * M_PI / 360) * transformAttr->OriginalRotation;
+        }
+        if (dz != 0.0f) {
+            transformAttr->rotations.x = 0;
+            transformAttr->rotations.y = 0;
+            transformAttr->rotations.z = z;
+            transformAttr->OriginalRotation = rotationMatrixZ(dz * 2 * M_PI / 360) * transformAttr->OriginalRotation;
+        }
+
+        ImGui::TreePop();
+    }
+}
+
 
 void ImGuiTransformationAttr::updateAttr(const mat4& transformation) {
     mat4 inv = inverse(transformation);

@@ -10,7 +10,7 @@ struct imGuiLightConstantPointAttr {
 	imGuiLightConstantPointAttr(const vec3& color, const vec3& position) : color(color), position(position) {}
 };
 
-class Light_Constant_Point : public Light, ImGuiPrintable
+class Light_Constant_Point : public Light, public ImGuiPrintable
 #else
 class Light_Constant_Point : public Light
 #endif

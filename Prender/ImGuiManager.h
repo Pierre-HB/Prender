@@ -6,15 +6,20 @@
 
 
 #ifdef IMGUI
+struct ImGuiObjectHierarchy;
+class ImGuiPrintable;
+class ImGuiManager;
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+//#include "src/light/Light_Constant_Point.h"
+class ImGuiPrintable;
+
 
 enum class ImGuiObjectType { LIGHT_CONSTANT_POINT, OBJECT_OBJECT3D_DEFAULT_P_N_UV, MaxObject };
 
 
-struct ImGuiObjectHierarchy;
-class ImGuiPrintable;
-class ImGuiManager;
+
 
 struct ImGuiObjectHierarchy {
 	const char* name;
@@ -51,6 +56,24 @@ struct obj_attr
 
 };
 
+//#include "src/light/Light_Constant_Point.h"
+class ImGuiPrintable
+{
+public:
+
+	//! create the attribute struct and return a pointer to it
+	virtual void* getAttribute() const = 0;
+
+	//! get a pointer to an attribut struct and update it
+	virtual void updateAttribute(void* attr) const = 0;
+
+	//! get a pointer to an attribute struct and actualise private variable to match it
+	virtual void setAttribute(void* attr) = 0;
+
+	//! print the attribut in ImGui
+	virtual void imGuiPrintAttribute(void* attr) const = 0;
+};
+
 class ImGuiManager
 {
 private:
@@ -60,7 +83,8 @@ public:
 	ImGuiManager();
 
 	~ImGuiManager();
-
+	
+	static void addObject(ImGuiObjectType type, ImGuiPrintable* obj, std::string name);
 	static void addObject(ImGuiObjectType type, ImGuiPrintable* obj);
 
 	static void removeObject(ImGuiObjectType type, ImGuiPrintable* obj);
@@ -93,21 +117,6 @@ public:
 	friend void ImGuiObjectHierarchy::render();
 };
 
-class ImGuiPrintable
-{
-public:
 
-	//! create the attribute struct and return a pointer to it
-	virtual void* getAttribute() const = 0;
-
-	//! get a pointer to an attribut struct and update it
-	virtual void updateAttribute(void* attr) const = 0;
-
-	//! get a pointer to an attribute struct and actualise private variable to match it
-	virtual void setAttribute(void* attr) = 0;
-
-	//! print the attribut in ImGui
-	virtual void imGuiPrintAttribute(void* attr) const = 0;
-};
 
 #endif

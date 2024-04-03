@@ -3,6 +3,7 @@
 Light_Constant_Point::Light_Constant_Point(const vec3& lightColor, const vec3& position) : Light(lightColor, 0, position, 0, vec3(), 0) {
 
 #ifdef IMGUI
+	//ImGuiManager::addObject(this);
 	ImGuiManager::addObject(ImGuiObjectType::LIGHT_CONSTANT_POINT, this);
 #endif
 }

@@ -2,11 +2,6 @@
 #include <thread>
 #include <chrono>
 
-//#ifdef IMGUI
-//#include "src/imgui/imgui_impl_opengl3.h"
-//#include "src/imgui/imgui_impl_glfw.h"
-//#endif
-
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -103,11 +98,6 @@ Engine::Engine() : activeScene(0), start(), nextRender(), nextUpdate() {
     if (window == nullptr)
         exit(-1);
 #ifdef IMGUI
-    /*IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 130");*/
     ImGuiManager::initializeContext(window);
     imGuiManager = new ImGuiManager();
 #endif
@@ -123,9 +113,6 @@ Engine::Engine() : activeScene(0), start(), nextRender(), nextUpdate() {
 
 Engine::~Engine() {
 #ifdef IMGUI
-    /*ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();*/
     ImGuiManager::destroyContext();
     delete imGuiManager;
 #endif
@@ -141,7 +128,6 @@ Engine::~Engine() {
 }
 
 void Engine::update() {
-    //std::cout << "update" << std::endl;
 #ifdef IMGUI
     imGuiManager->setAttributes();
 #endif
@@ -160,10 +146,8 @@ void Engine::update() {
 void Engine::render() {
 
 #ifdef IMGUI
-    /*ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();*/
     ImGuiManager::startFrame();
+    ImGui::ShowDemoWindow();
     imGuiManager->beginConsole();
 
     ImGui::Text("FPS : %d, TPS : %d", timeData.fps, timeData.tps);
@@ -179,14 +163,9 @@ void Engine::render() {
 #ifdef IMGUI
     
     imGuiManager->endConsole();
-    //ImGui::ShowDemoWindow();
     imGuiManager->renderInstances();
-    //ImGui::Begin("Debug");
-    
-    //ImGui::End();
+
     ImGuiManager::endFrame();
-    //ImGui::Render();
-    //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
 
     glfwSwapBuffers(window);

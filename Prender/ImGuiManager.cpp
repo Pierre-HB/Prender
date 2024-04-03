@@ -120,11 +120,15 @@ ImGuiManager::~ImGuiManager() {
 void ImGuiManager::addObject(ImGuiObjectType type, ImGuiPrintable* obj) {
 	std::string name = imGuiGetObjectName(type) + std::string(" ") + std::to_string(ImGuiManager::objects[static_cast<size_t>(type)].size());
 
+	ImGuiManager::addObject(type, obj, name);
+}
+
+void ImGuiManager::addObject(ImGuiObjectType type, ImGuiPrintable* obj, std::string name) {
+
 	ImGuiManager::objects[static_cast<size_t>(type)].push_back(obj_attr(obj, obj->getAttribute(), name));
 
 }
 
-//TO TEST
 void ImGuiManager::removeObject(ImGuiObjectType type, ImGuiPrintable* obj) {
 	for (size_t i = 0; i < ImGuiManager::objects[static_cast<size_t>(type)].size(); i++) {
 		if (ImGuiManager::objects[static_cast<size_t>(type)][i].obj == obj) {
