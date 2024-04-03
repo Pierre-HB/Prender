@@ -6,6 +6,8 @@
 
 
 #ifdef IMGUI
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 enum class ImGuiObjectType { LIGHT_CONSTANT_POINT, OBJECT_OBJECT3D_DEFAULT_P_N_UV, MaxObject };
 
@@ -70,7 +72,22 @@ public:
 	void updateAttributes();
 
 	//! to call during render phase to update attributes in ImGui
-	void render();
+	void renderInstancesTree();
+	void renderInstances();
+
+	//! To call at the begening of the render pass to initialise the on screen console
+	void beginConsole() const;
+
+	//! To call at the end of the render pass to close the on screen console
+	void endConsole() const;
+
+	static void startFrame();
+
+	static void endFrame();
+
+	static void initializeContext(GLFWwindow* window);
+
+	static void destroyContext();
 
 	friend void ImGuiObjectHierarchy::computeNbInstance();
 	friend void ImGuiObjectHierarchy::render();

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../main.h"
 #include "Vector.h"
 #include <ostream>
 
@@ -62,6 +63,15 @@ struct mat4
 
 	//! division by a scalar
 	mat4* operator/=(float s);
+
+	//! return the translation (assuming the the matrix represente some kind of translation)
+	vec3 extractTranslation() const;
+
+	//! return the rotation (assuming that the matrix represent some kind of rotation
+	mat4 extractRotation() const;
+
+	//! return the 3 scaling factors, assuming that the matrix represent some kind of scaling
+	vec3 extractScale() const;
 };
 
 //! printing
@@ -116,8 +126,28 @@ mat4 translationMatrix(const vec3& v);
 mat4 scaleMatrix(float s);
 
 //! non uniform scale of (sX, sY, sZ)
-mat4 scaleMatrix(float sX, float sY, float sZ);
+mat4 scaleMatrix(const vec3& scales);
 
+mat4 transformationMatrix(const vec3& rotations, const vec3& scales, const vec3& translation);
+
+#ifdef IMGUI
+struct ImGuiTransformationAttr;
+
+struct ImGuiTransformationAttr
+{
+	vec3 translation;
+	vec3 scales;
+	mat4 OriginalRotation;// because it's unstable to get euler angle from a transformation, we keep the initial rotation as it is
+	vec3 rotations;
+
+	//! extract the translation, scale and rotation from a transformation
+	ImGuiTransformationAttr(const mat4& transformation);
+
+	//! extract the translation, scale and rotation from a transformation close to the attributes
+	void updateAttr(const mat4& transformation);
+
+};
+#endif
 //! viewport matrix
 //mat4 viewPort(int width, int height);
 

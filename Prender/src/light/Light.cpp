@@ -9,7 +9,6 @@ Light::Light() : lightColor(), falloff(-1.0f), position(), cos_angle_min(), dire
 }
 
 Light::~Light() {
-    std::cout << "destruction of light" << std::endl;
 }
 
 lightCaster Light::getLightCaster() const {

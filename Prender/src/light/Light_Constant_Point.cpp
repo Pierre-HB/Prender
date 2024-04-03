@@ -8,7 +8,6 @@ Light_Constant_Point::Light_Constant_Point(const vec3& lightColor, const vec3& p
 }
 
 Light_Constant_Point::~Light_Constant_Point() {
-	std::cout << "detruction of light Point" << std::endl;
 #ifdef IMGUI
 	ImGuiManager::removeObject(ImGuiObjectType::LIGHT_CONSTANT_POINT, this);
 #endif

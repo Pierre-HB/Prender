@@ -2,10 +2,10 @@
 #include <thread>
 #include <chrono>
 
-#ifdef IMGUI
-#include "src/imgui/imgui_impl_opengl3.h"
-#include "src/imgui/imgui_impl_glfw.h"
-#endif
+//#ifdef IMGUI
+//#include "src/imgui/imgui_impl_opengl3.h"
+//#include "src/imgui/imgui_impl_glfw.h"
+//#endif
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -103,11 +103,12 @@ Engine::Engine() : activeScene(0), start(), nextRender(), nextUpdate() {
     if (window == nullptr)
         exit(-1);
 #ifdef IMGUI
-    IMGUI_CHECKVERSION();
+    /*IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui_ImplOpenGL3_Init("#version 130");*/
+    ImGuiManager::initializeContext(window);
     imGuiManager = new ImGuiManager();
 #endif
 
@@ -122,9 +123,10 @@ Engine::Engine() : activeScene(0), start(), nextRender(), nextUpdate() {
 
 Engine::~Engine() {
 #ifdef IMGUI
-    ImGui_ImplOpenGL3_Shutdown();
+    /*ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    ImGui::DestroyContext();*/
+    ImGuiManager::destroyContext();
     delete imGuiManager;
 #endif
 
@@ -158,24 +160,33 @@ void Engine::update() {
 void Engine::render() {
 
 #ifdef IMGUI
-    ImGui_ImplOpenGL3_NewFrame();
+    /*ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
+    ImGui::NewFrame();*/
+    ImGuiManager::startFrame();
+    imGuiManager->beginConsole();
+
+    ImGui::Text("FPS : %d, TPS : %d", timeData.fps, timeData.tps);
+    ImGui::Text("Time (ms) | idle : %3.0lf, render : %3.0lf, update : %3.0lf", timeData.sleepedTimeLastSecond * 1000, timeData.renderTimeLastSecond * 1000, timeData.updateTimeLastSecond * 1000);
+    ImGui::Text("Time per Tick : %3.2lfms, time per Frame : %3.2lfms", timeData.updateTimeLastSecond * 1000 / static_cast<double>(timeData.tps), timeData.renderTimeLastSecond * 1000 / static_cast<double>(timeData.fps));
+    
+    imGuiManager->renderInstancesTree();
 #endif
 
     glfwSetWindowTitle(window, "My Window");
     scenes[activeScene]->render();
 
 #ifdef IMGUI
+    
+    imGuiManager->endConsole();
     //ImGui::ShowDemoWindow();
-    imGuiManager->render();
-    ImGui::Begin("Debug");
-    ImGui::Text("FPS : %d, TPS : %d", timeData.fps, timeData.tps);
-    ImGui::Text("Time (ms) | idle : %3.0lf, render : %3.0lf, update : %3.0lf", timeData.sleepedTimeLastSecond * 1000, timeData.renderTimeLastSecond * 1000, timeData.updateTimeLastSecond * 1000);
-    ImGui::Text("Time per Tick : %3.2lfms, time per Frame : %3.2lfms", timeData.updateTimeLastSecond * 1000/static_cast<double>(timeData.tps), timeData.renderTimeLastSecond * 1000 / static_cast<double>(timeData.fps));
-    ImGui::End();
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    imGuiManager->renderInstances();
+    //ImGui::Begin("Debug");
+    
+    //ImGui::End();
+    ImGuiManager::endFrame();
+    //ImGui::Render();
+    //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #endif
 
     glfwSwapBuffers(window);

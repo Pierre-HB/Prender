@@ -48,6 +48,45 @@ mat4* mat4::operator/=(float s) {
 	return this;
 }
 
+vec3 mat4::extractTranslation() const {
+    /*
+    * Assuming that the matrix as the form:
+    |a b c Tx
+    |d e f Ty
+    |g h i Tz
+    |0 0 0 1
+    */
+    return vec3(c[3], c[7], c[11]);
+}
+
+mat4 mat4::extractRotation() const {
+    /*
+    * Assuming that the matrix as the form:
+    |a b c Tx
+    |d e f Ty
+    |g h i Tz
+    |0 0 0 1
+    AND a determinant of 1
+    return :
+    |a b c 0
+    |d e f 0
+    |g h i 0
+    |0 0 0 1
+    */
+    return mat4(c[0], c[1], c[2],  0,
+                c[4], c[5], c[6],  0,
+                c[8], c[9], c[10], 0,
+                0,    0,    0,     1);
+}
+
+vec3 mat4::extractScale() const {
+    float sx = sqrt(c[0] * c[0] + c[4] * c[4] + c[8] * c[8]);
+    float sy = sqrt(c[1] * c[1] + c[5] * c[5] + c[9] * c[9]);
+    float sz = sqrt(c[2] * c[2] + c[6] * c[6] + c[10] * c[10]);
+    return vec3(sx, sy, sz);
+}
+
+
 mat4 operator+(const mat4& a, const mat4& b) {
 	mat4 tmp = mat4();
 	for (int i = 0; i < 16; i++)
@@ -277,13 +316,133 @@ mat4 scaleMatrix(float s) {
                 0, 0, 0, 1);
 }
 
-mat4 scaleMatrix(float sX, float sY, float sZ) {
-    return mat4(sX, 0, 0, 0,
-                0, sY, 0, 0,
-                0, 0, sZ, 0,
+mat4 scaleMatrix(const vec3& scales) {
+    return mat4(scales.x, 0, 0, 0,
+                0, scales.y, 0, 0,
+                0, 0, scales.z, 0,
                 0, 0, 0, 1);
 }
 
 mat4 normalTransformation(const mat4& m) {
     return transpose(inverse(m));
 }
+
+mat4 transformationMatrix(const vec3& rotations, const vec3& scales, const vec3& translation) {
+    return rotationMatrixZ(rotations.z) * rotationMatrixY(rotations.y) * rotationMatrixX(rotations.x) * scaleMatrix(scales) * translationMatrix(translation);
+}
+
+#ifdef IMGUI
+
+ImGuiTransformationAttr::ImGuiTransformationAttr(const mat4& transformation) {
+    mat4 inv = inverse(transformation);
+    translation = -inv.extractTranslation();
+    OriginalRotation = transformation * translationMatrix(-translation);
+    scales = OriginalRotation.extractScale();
+    OriginalRotation = OriginalRotation * scaleMatrix(vec3(1 / scales.x, 1 / scales.y, 1 / scales.z));
+    OriginalRotation = OriginalRotation.extractRotation(); //for stability
+    rotations = vec3();
+}
+
+void ImGuiTransformationAttr::updateAttr(const mat4& transformation) {
+    mat4 inv = inverse(transformation);
+    translation = -inv.extractTranslation();
+    mat4 tmp = transformation * translationMatrix(-translation);
+    scales = tmp.extractScale();
+    tmp = tmp * scaleMatrix(vec3(1 / scales.x, 1 / scales.y, 1 / scales.z));
+    tmp = tmp.extractRotation(); //for stability
+
+    mat4 dRot = tmp * transpose(OriginalRotation);
+    //tmp = Rot(Z+dZ)*Rot(Y+dY)*Rot(X+dX) * originalRotation
+    //dRot = Rot(Z+dZ)*Rot(Y+dY)*Rot(X+dX)
+    //dRot = Rot(Z+dZ)*Rot(Y+dY)*Rot(dX)*RotX
+    // 
+    //assume dX is near 0 i.e sin is bijectif and cos is > 0
+    dRot = dRot * rotationMatrixX(-rotations.x);
+    //dRot' = dRot*Rot(-X)
+    //dRot' = Rot(Z+dZ)*Rot(Y+dY)*Rot(dX)*RotX*Rot(-X)
+    //dRot' = Rot(Z+dZ)*Rot(Y+dY)*Rot(dX)
+    //dRot'_1 = Rot(-dX)*Rot(-Y-dY)*Rot(-Z-dZ)
+    //
+    //for z = (0, 0, 1) eigenvector of Rot(-Z-dZ):
+    //dRot'_1*z = Rot(-dX)*Rot(-Y-dY)*z
+    //         = Rot(-dX)
+
+    //Rot(Y)= |cos(Y)  0 sin(Y)
+    //        |0       1     0
+    //        |-sin(Y) 0 cos(Y)
+
+    //dRot'_1*z = Rot(-dX)*(sin(-Y-dY), 0, cos(-Y-dY))
+
+    //Rot(X)= |1 0      0
+    //        |0 cos(X) -sin(X)
+    //        |0 sin(X) cos(X)
+
+    //dRot'_1*z = (sin(-Y-dY), -sin(-dX)*cos(-Y-dY), cos(-dX)*cos(-Y-dY))
+
+    //sin(a+b) = sin(a)cos(b) + cos(a)sin(b)
+    //cos(a+b) = cos(a)cos(b) - sin(a)sin(b)
+
+
+    //dRot'' = Rot(-Z)*dRot*Rot(-X)
+    //dRot'' = Rot(-Z)*Rot(Z+dZ)*Rot(Y+dY)*Rot(dX)*RotX*Rot(-X)
+    //dRot'' = Rot(dZ)*Rot(Y+dY)*Rot(dX)
+
+    //for y = (0, 1, 0)
+    
+    //Rot(X)= |1 0      0
+    //        |0 cos(X) -sin(X)
+    //        |0 sin(X) cos(X)
+
+    //dRot''*y = Rot(dZ)*Rot(Y+dY)*(0, cos(dX), sin(dX))
+
+    //Rot(Y)= |cos(Y)  0 sin(Y)
+    //        |0       1     0
+    //        |-sin(Y) 0 cos(Y)
+
+    //dRot''*y = Rot(dZ)*(sin(Y+dY)sin(dX), cos(dX), cos(Y+dY)sin(dX))
+
+    //Rot(Z)= |cos(Z) -sin(Z) 0
+    //        |sin(Z) cos(Z)  0
+    //        |0      0       1
+
+    //dRot''*y = (cos(dZ)sin(Y+dY)sin(dX) -sin(dZ)cos(dX),
+    //            sin(dZ)sin(Y+dY)sin(dX) +cos(dZ)cos(dX),
+    //            cos(Y+dY)sin(dX) 
+
+
+
+    //Rot(X)= |1 0      0
+    //        |0 cos(X) -sin(X)
+    //        |0 sin(X) cos(X)
+
+    //Rot(Y)= |cos(Y)  0 sin(Y)
+    //        |0       1     0
+    //        |-sin(Y) 0 cos(Y)
+
+    //Rot(Z)= |cos(Z) -sin(Z) 0
+    //        |sin(Z) cos(Z)  0
+    //        |0      0       1
+
+    //Rot(Z)*Rot(Y)*Rot(X) = 
+    //
+    // Rot(Z)*
+    // |cos(Y)      sin(Y)sin(X)        sin(Y)cos(X)
+    // |0           cos(X)              -sin(X)
+    // |-sin(Y)     sin(X)cos(Y)        cos(X)cos(Y)
+    //
+    // =
+    //
+    // |cos(Z)cos(Y)    
+    // |
+    // |
+
+    //compute the two angles values from : https://eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
+    //choos the closest one to my problem
+    //IF cos(Y)~ 0 <=> sin(Y)~1
+
+
+
+    rotations = vec3();
+}
+
+#endif

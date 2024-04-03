@@ -1,6 +1,8 @@
 #include "ImGuiManager.h"
 
 #ifdef IMGUI
+#include "src/imgui/imgui_impl_opengl3.h"
+#include "src/imgui/imgui_impl_glfw.h"
 
 const char* imGuiGetObjectName(ImGuiObjectType type) {
 	switch (type)
@@ -46,6 +48,38 @@ void ImGuiObjectHierarchy::render() {
 		ImGui::EndDisabled();
 }
 
+void ImGuiManager::beginConsole() const {
+	ImGui::Begin("Console");
+}
+
+void ImGuiManager::endConsole() const {
+	ImGui::End();
+}
+
+void ImGuiManager::startFrame() {
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+}
+
+void ImGuiManager::endFrame() {
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ImGuiManager::initializeContext(GLFWwindow* window) {
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 130");
+}
+
+void ImGuiManager::destroyContext() {
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+}
 
 std::vector<std::vector<obj_attr>> ImGuiManager::objects = std::vector<std::vector<obj_attr>>(static_cast<size_t>(ImGuiObjectType::MaxObject));
 
@@ -116,49 +150,13 @@ void ImGuiManager::updateAttributes() {
 	}
 }
 
-void ImGuiManager::render() {
-	/*ImGui::Begin("test tree");
-	if (ImGui::TreeNode("root")) {
-		ImGui::Text("test");
-		if (ImGui::TreeNode("child1")) {
-			ImGui::Text("child 1");
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("child2")) {
-			ImGui::Text("child 2");
-			ImGui::Begin("test child 2");
-			ImGui::Text("C");
-			ImGui::End();
-			ImGui::TreePop();
-		}
-		ImGui::TreePop();
-	}
-	ImGui::End();*/
-	//int i = 0;
-	//while (i != static_cast<int>(ImGuiObjectType::MaxObject)) {
-	//	//TODO
-	//	if(ImGui::TreeNode(imGuiGetObjectName(i)))
-	//	i++;
-	//}
+void ImGuiManager::renderInstancesTree() {
 
-	/*if (ImGui::TreeNode("Instances")) {
-		if (ImGui::TreeNode("Lights")) {
-			if(ImGui::TreeNode("Point Light")) {
-				for (size_t j = 0; j < objects[static_cast<size_t>(ImGuiObjectType::LIGHT_CONSTANT_POINT)].size(); j++) {
-					if (ImGui::Button(objects[static_cast<size_t>(ImGuiObjectType::LIGHT_CONSTANT_POINT)][j].name.c_str())) {
-						objects[static_cast<size_t>(ImGuiObjectType::LIGHT_CONSTANT_POINT)][j].open = true;
-					}
-				}
-				ImGui::TreePop();
-			}
-			ImGui::TreePop();
-		}
-
-		ImGui::TreePop();
-	}*/
 	hierarchy->computeNbInstance();
 	hierarchy->render();
+}
 
+void ImGuiManager::renderInstances() {
 	for (size_t i = 0; i < objects.size(); i++) {
 		for (size_t j = 0; j < objects[i].size(); j++) {
 			if (objects[i][j].open) {
