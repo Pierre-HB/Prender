@@ -33,13 +33,13 @@ LightManager::~LightManager() {
 
 void LightManager::addLight(Light* light) {
     lights.push_back(light);
+#ifdef CONSOLE
     if (lights.size() > MAX_LIGHT)
         std::cout << "[WARNING], lightManager has more than " << MAX_LIGHT << ", some light will not be rendered." << std::endl;
+#endif
 }
 
-//! TO TEST
 void LightManager::removeLight(Light* light) {
-    std::cout << "remove light. initial : " << lights.size();
     for (size_t i = 0; i < lights.size(); i++) {
         if (lights[i] == light) {
             delete lights[i];
@@ -47,8 +47,6 @@ void LightManager::removeLight(Light* light) {
             break;
         }
     }
-    //remove(lights.begin(), lights.end(), light);
-    std::cout << " final : " << lights.size() << std::endl;
 }
 
 std::vector<Light*> LightManager::getLights() {
@@ -60,8 +58,10 @@ void LightManager::setAmbiantColor(const vec4& color) {
 }
 
 void LightManager::computeLightCasters() {
+#ifdef CONSOLE
     if (lights.size() > MAX_LIGHT)
         std::cout << "[WARNING] trying to load more than " << MAX_LIGHT << " lights.Only " << MAX_LIGHT << " lights are loaded." << std::endl;
+#endif
 
     for (int i = 0; i < MAX_LIGHT; i++) {
         lightCasters[i] = i < lights.size() ? lights[i]->getLightCaster() : lightCaster();
@@ -81,14 +81,18 @@ void LightManager::bindShader(Shader* shader) const {
         glUniformBlockBinding(shader->getID(), glGetUniformBlockIndex(shader->getID(), "lightCastersBlock"), lightBindingPoint);
         break;
     default:
+#ifdef CONSOLE
         std::cout << "Binding Light to Unknown Shader : " << shader->getShaderType() << std::endl;
+#endif
         break;
     }
 }
 
 void LightManager::loadLight() const {
+#ifdef CONSOLE
     if (lightCasters.size() != MAX_LIGHT)
         std::cout << "[WARNING] Loading wrong number of lights. Should be " << MAX_LIGHT << " lights ans it's : " << lightCasters.size() << std::endl;
+#endif
 
     glBindBuffer(GL_UNIFORM_BUFFER, lightCatserUniformBuffer);
     glBufferData(GL_UNIFORM_BUFFER, MAX_LIGHT * sizeof(lightCaster), lightCasters.data(), GL_STATIC_DRAW);

@@ -1,9 +1,11 @@
 #include "Matrix3.h"
 
+#ifdef CONSOLE
 std::ostream& operator<<(std::ostream& o, const mat3& m) {
 	o << "[" << m.c[0] << ", " << m.c[1] << ", " << m.c[2] << " | " << m.c[3] << ", " << m.c[4] << ", " << m.c[5] << " | " << m.c[6] << ", " << m.c[7] << ", " << m.c[8] << "]";
 	return o;
 }
+#endif
 
 mat3* mat3::operator+=(const mat3& m) {
 	for (int i = 0; i < 9; i++)

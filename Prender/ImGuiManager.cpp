@@ -11,6 +11,10 @@ const char* imGuiGetObjectName(ImGuiObjectType type) {
 		return "Light Point Constant";
 	case ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV:
 		return "Object P.N.UV";
+	case ImGuiObjectType::UTILS_PERSPECTIVE_CAMERA:
+		return "Perspective Camera";
+	case ImGuiObjectType::UTILS_TEXTURE:
+		return "Texture";
 	default:
 		return "UNKOWN";
 	}
@@ -102,11 +106,27 @@ ImGuiManager::ImGuiManager() {
 	object3DChilds[0] = object3dPNUV;
 	ImGuiObjectHierarchy* Object3DHierarchy = new ImGuiObjectHierarchy("Object3D", object3DChilds);
 
+	//Camera hierarchy =========================================
+	ImGuiObjectHierarchy* perspectiveCamera = new ImGuiObjectHierarchy("Perspective Camera", ImGuiObjectType::UTILS_PERSPECTIVE_CAMERA);
+
+	std::vector<ImGuiObjectHierarchy*> cameraChilds = std::vector<ImGuiObjectHierarchy*>(1);
+	cameraChilds[0] = perspectiveCamera;
+	ImGuiObjectHierarchy* cameraHierarchy = new ImGuiObjectHierarchy("Camera", cameraChilds);
+
+	//Texture hierarchy =========================================
+	ImGuiObjectHierarchy* texture = new ImGuiObjectHierarchy("Texture", ImGuiObjectType::UTILS_TEXTURE);
+
+	std::vector<ImGuiObjectHierarchy*> textureChilds = std::vector<ImGuiObjectHierarchy*>(1);
+	textureChilds[0] = texture;
+	ImGuiObjectHierarchy* textureHierarchy = new ImGuiObjectHierarchy("Texture", textureChilds);
+
 
 	// Global Hierarchy =======================================
-	std::vector<ImGuiObjectHierarchy*> globalChilds = std::vector<ImGuiObjectHierarchy*>(2);
+	std::vector<ImGuiObjectHierarchy*> globalChilds = std::vector<ImGuiObjectHierarchy*>(4);
 	globalChilds[0] = lightHierarchy;
 	globalChilds[1] = Object3DHierarchy;
+	globalChilds[2] = cameraHierarchy;
+	globalChilds[3] = textureHierarchy;
 
 	hierarchy = new ImGuiObjectHierarchy("Instances", globalChilds);
 

@@ -2,14 +2,16 @@
 
 #include <fstream>
 #include <sstream>
-#include <iostream>
 #include <map>
 
-Object3D_P_N_UV::Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> normals, std::vector<vec2> uvs, std::vector<int> indices, Texture* texture) : texture(texture) {
+Object3D_P_N_UV::Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> normals, std::vector<vec2> uvs, std::vector<int> indices, Texture* texture) : texture(texture), nb_vertex(), lightCasterID() {
 	vao->setPoints(points, uvs, indices);
+#ifdef IMGUI
+	ImGuiManager::addObject(ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV, this);
+#endif
 }
 
-Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(texture) {
+Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(texture), nb_vertex(), lightCasterID() {
 	std::ifstream inputStream;
 	std::stringstream stream;
 	inputStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -20,7 +22,9 @@ Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(t
 		inputStream.close();
 	}
 	catch (std::ifstream::failure e) {
+#ifdef CONSOLE
 		std::cout << "[ERROR] shader could not read file '" << file << "'" << std::endl;
+#endif
 	}
 	char line[512];
 	int max_size = 512;
@@ -90,7 +94,15 @@ Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(t
 	}
 	vao->setPoints(vertices, indices);
 	nb_vertex = indices.size();
+#ifdef IMGUI
+	ImGuiManager::addObject(ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV, this);
+#endif
+}
 
+Object3D_P_N_UV::~Object3D_P_N_UV() {
+#ifdef IMGUI
+	ImGuiManager::removeObject(ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV, this);
+#endif
 }
 
 void Object3D_P_N_UV::setup(Shader* shader, const mat4& p, const mat4& v) {
@@ -107,7 +119,9 @@ void Object3D_P_N_UV::setup(Shader* shader, const mat4& p, const mat4& v) {
 		shader->setUniform("mv_n", normalTransformation(v * world * object));
 		break;
 	default:
+#ifdef CONSOLE
 		std::cout << "[WARNING] Setup of Object3D_P_N_UV with shader " << shader->getShaderType() << " no setup is performed." << std::endl;
+#endif
 		break;
 	}
 }
@@ -118,6 +132,12 @@ void Object3D_P_N_UV::draw() {
 
 void Object3D_P_N_UV::setLightCasterID(const std::vector<lightCaster>& lightCasters) {
 	//lightCasterID[i];
+	/*std::cout << "start : ";
+	for (int i = 0; i < maxLight; i++) {
+		std::cout << lightCasterID[i] << " ";
+	}
+	std::cout << std::endl;*/
+
 	mat4 inv_ow = inverse(world * object);
 	float best_intensity[maxLight]{};
 	for (int i = 0; i < maxLight; i++) {
@@ -147,4 +167,60 @@ void Object3D_P_N_UV::setLightCasterID(const std::vector<lightCaster>& lightCast
 			}
 		}
 	}
+	/*std::cout << "end   : ";
+	for (int i = 0; i < maxLight; i++) {
+		std::cout << lightCasterID[i] << " ";
+	}
+	std::cout << std::endl;*/
 }
+
+
+#ifdef IMGUI
+void* Object3D_P_N_UV::getAttribute() const {
+	std::vector<int> tmp = std::vector<int>(maxLight, -1);
+	for (int i = 0; i < maxLight; i++)
+		tmp[i] = lightCasterID[i];
+	imGuiObject3D_P_N_UVAttr* attr = new imGuiObject3D_P_N_UVAttr(texture->getID(), nb_vertex, tmp, Object3D::getAttribute());
+	return attr;
+}
+
+void Object3D_P_N_UV::updateAttribute(void* attr) const {
+
+	std::vector<int> tmp = std::vector<int>(maxLight, -1);
+	for (int i = 0; i < maxLight; i++) {
+		tmp[i] = lightCasterID[i];
+	}
+		
+	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->textureID = texture->getID();
+	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->nb_vertex = nb_vertex;
+	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->lightCasterID = tmp;
+	Object3D::updateAttribute(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->parentAttr);
+
+}
+
+void Object3D_P_N_UV::setAttribute(void* attr) {
+	texture->setID(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->textureID);
+	for (int i = 0; i < maxLight; i++)
+		lightCasterID[i] = static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->lightCasterID[i];
+	Object3D::setAttribute(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->parentAttr);
+	
+}
+
+void Object3D_P_N_UV::imGuiPrintAttribute(void* attr) const {
+	int tmp = static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->textureID;
+	ImGui::InputInt(": TextureID", &tmp);
+	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->textureID = tmp;
+	ImGui::Text("%d : nb vertex", static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->nb_vertex);
+
+	Object3D::imGuiPrintAttribute(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->parentAttr);
+
+	if (ImGui::BeginListBox("listbox 1"))
+	{
+		for (int n = 0; n < static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->lightCasterID.size(); n++)
+		{
+			ImGui::InputInt(std::to_string(n).c_str(), &(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->lightCasterID[n]));
+		}
+		ImGui::EndListBox();
+	}
+}
+#endif

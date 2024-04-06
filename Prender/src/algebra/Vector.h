@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ostream>
+#include "../../main.h"
 
 
 template<typename T>
@@ -73,12 +73,14 @@ struct vector2
 	}
 };
 
+#ifdef CONSOLE
 //! printing of vecctor2
 template<typename T>
 std::ostream& operator<<(std::ostream& o, const vector2<T>& v) {
 	o << "(" << v.x << ", " << v.y << ")";
 	return o;
 }
+#endif
 
 //! Addition of vec2
 template<typename T>
@@ -220,12 +222,14 @@ struct vector3
 	}
 };
 
+#ifdef CONSOLE
 //! printing of vector3
 template<typename T>
 std::ostream& operator<<(std::ostream& o, const vector3<T>& v) {
 	o << "(" << v.x << ", " << v.y << ", " << v.z << ")";
 	return o;
 }
+#endif
 
 //! Addition of vector3
 template<typename T>
@@ -392,12 +396,14 @@ struct vector4
 	}
 };
 
+#ifdef CONSOLE
 //! printing of vector4
 template<typename T>
 std::ostream& operator<<(std::ostream& o, const vector4<T>& v) {
 	o << "(" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << ")";
 	return o;
 }
+#endif
 
 //! Addition of vector4
 template<typename T>

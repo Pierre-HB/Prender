@@ -2,7 +2,6 @@
 
 #include "../../main.h"
 #include "Vector.h"
-#include <ostream>
 
 struct mat4
 {
@@ -74,8 +73,10 @@ struct mat4
 	vec3 extractScale() const;
 };
 
+#ifdef CONSOLE
 //! printing
 std::ostream& operator<<(std::ostream& o, const mat4& m);
+#endif
 
 //! addition of matrixes
 mat4 operator+(const mat4& a, const mat4& b);
@@ -151,25 +152,10 @@ struct ImGuiTransformationAttr
 
 	//! extract the translation, scale and rotation from a transformation close to the attributes
 	void updateAttr(const mat4& transformation);
+
+	mat4 getTansformation() const;
+
+	void imGuiPrintAttribute();
 };
 
-void imGuiPrintAttribute(ImGuiTransformationAttr* transformAttr);
 #endif
-//! viewport matrix
-//mat4 viewPort(int width, int height);
-
-//lookat
-
-//viewport
-
-//projection perspective
-
-//projection ortogonal
-
-// rotate around a vector v
-
-
-
-
-//TODO Rotation with mat3
-//TODO mat4(mat3) (the upper left part of the matrix, the rotation part)

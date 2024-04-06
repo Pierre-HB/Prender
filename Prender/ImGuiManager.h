@@ -16,7 +16,7 @@ class ImGuiManager;
 class ImGuiPrintable;
 
 
-enum class ImGuiObjectType { LIGHT_CONSTANT_POINT, OBJECT_OBJECT3D_DEFAULT_P_N_UV, MaxObject };
+enum class ImGuiObjectType { LIGHT_CONSTANT_POINT, OBJECT_OBJECT3D_DEFAULT_P_N_UV, UTILS_PERSPECTIVE_CAMERA, UTILS_TEXTURE, MaxObject };
 
 
 

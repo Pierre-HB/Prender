@@ -1,10 +1,11 @@
 #include "Matrix2.h"
 
-
+#ifdef CONSOLE
 std::ostream& operator<<(std::ostream& o, const mat2& m) {
 	o << "[" << m.c[0] << ", " << m.c[1] << " | " << m.c[2] << ", " << m.c[3] << "]";
 	return o;
 }
+#endif
 
 mat2* mat2::operator+=(const mat2& m) {
 	for (int i = 0; i < 4; i++)

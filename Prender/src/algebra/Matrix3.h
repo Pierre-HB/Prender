@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../../main.h"
 #include "Vector.h"
-#include <ostream>
 
 struct mat3
 {
@@ -53,8 +53,10 @@ struct mat3
 	mat3* operator/=(float s);
 };
 
+#ifdef CONSOLE
 //! printing
 std::ostream& operator<<(std::ostream& o, const mat3& m);
+#endif
 
 //! addition of matrixes
 mat3 operator+(const mat3& a, const mat3& b);

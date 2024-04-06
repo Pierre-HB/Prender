@@ -52,3 +52,21 @@ mat4 perspectiveProjection(float fov, float aspect_ratio, float z_near, float z_
             0, 0, -(z_far + z_near) / (z_far - z_near), 2 * z_far * z_near / (z_far - z_near),
             0, 0, 1, 0);
 }
+
+#ifdef IMGUI
+void* Camera::getAttribute() const {
+    return new imGuiCameraAttr(camera);
+}
+
+void Camera::updateAttribute(void* attr) const {
+    static_cast<imGuiCameraAttr*>(attr)->camera.updateAttr(camera);
+}
+
+void Camera::setAttribute(void* attr) {
+    camera = static_cast<imGuiCameraAttr*>(attr)->camera.getTansformation();
+}
+
+void Camera::imGuiPrintAttribute(void* attr) const {
+    static_cast<imGuiCameraAttr*>(attr)->camera.imGuiPrintAttribute();
+}
+#endif

@@ -2,7 +2,19 @@
 
 #include "../../main.h"
 #include "../algebra/Algebra.h"
+
+#ifdef IMGUI
+struct imGuiCameraAttr {
+	ImGuiTransformationAttr camera;
+
+
+	imGuiCameraAttr(const mat4& camera) : camera(ImGuiTransformationAttr(camera, "camera")) {}
+};
+
+class Camera : public ImGuiPrintable
+#else
 class Camera
+#endif
 {
 protected:
 	//! Camera transform : the world space transformation of the camera. To transform an object in world space in view space, juste multiply my inverse(camera)
@@ -21,6 +33,16 @@ public:
 
 	//! return the projection matrix
 	mat4 getProjectionMatrix();
+
+#ifdef IMGUI
+	virtual void* getAttribute() const;
+
+	virtual void updateAttribute(void* attr) const;
+
+	virtual void setAttribute(void* attr);
+
+	virtual void imGuiPrintAttribute(void* attr) const;
+#endif
 };
 
 //! return the lookat camera matrix

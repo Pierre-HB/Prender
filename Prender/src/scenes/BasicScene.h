@@ -13,13 +13,12 @@ class BasicScene : public Scene
 private:
 	Texture* texture;
 	Texture* texture_smiley;
+	Texture* debug;
 	Shader* shader_test;
 	PerspectiveCamera* camera;
 	Object3D_P_N_UV* object;
 
 	LightManager* lightManager;
-
-	ImGuiTransformationAttr* transfo;
 
 
 

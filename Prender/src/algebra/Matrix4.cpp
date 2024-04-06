@@ -1,12 +1,12 @@
 #include "Matrix4.h"
-#include <iostream>
-#define _USE_MATH_DEFINES
-#include <math.h>
 
+
+#ifdef CONSOLE
 std::ostream& operator<<(std::ostream& o, const mat4& m) {
 	o << "[" << m.c[0] << ", " << m.c[1] << ", " << m.c[2] << ", " << m.c[3] << " | " << m.c[4] << ", " << m.c[5] << ", " << m.c[6] << ", " << m.c[7] << " | " << m.c[8] << ", " << m.c[9] << ", " << m.c[10] << ", " << m.c[11] << " | " << m.c[12] << ", " << m.c[13] << ", " << m.c[14] << ", " << m.c[15] << "]";
 	return o;
 }
+#endif
 
 mat4* mat4::operator+=(const mat4& m) {
 	for (int i = 0; i < 16; i++)
@@ -353,20 +353,28 @@ void ImGuiTransformationAttr::extract_transormations(const mat4& transformation)
     OriginalRotation = OriginalRotation.extractRotation(); //for stability
 }
 
-void imGuiPrintAttribute(ImGuiTransformationAttr* transformAttr){
-    if (ImGui::TreeNode(transformAttr->name)) {
+void ImGuiTransformationAttr::imGuiPrintAttribute() {
+    if (ImGui::TreeNode(name)) {
         ImGui::PushItemWidth(75 * 3);
-        ImGui::DragFloat3(": translation", &(transformAttr->translation.x));
+        ImGui::DragFloat3(": translation", &(translation.x));
         ImGui::PopItemWidth();
 
-        ImGui::PushItemWidth(75*3);
-        ImGui::DragFloat3(": scales", &(transformAttr->scales.x), 1, 1e-3, 1e10);
+        float scale = length(scales)/(sqrt(3));
+        float old_scale = scale;
+        ImGui::PushItemWidth(75 * 3);
+
+        ImGui::DragFloat3(": scales", &(scales.x), 1, 1e-3, 1000, NULL, ImGuiSliderFlags_Logarithmic);
+        ImGui::PushItemWidth(75);
+        ImGui::DragFloat(": scale", &scale, 1, 1e-3, 1000, NULL, ImGuiSliderFlags_Logarithmic);
         ImGui::PopItemWidth();
+        if (old_scale != scale) {
+            scales *= scale / old_scale;
+        }
 
         float x, y, z;
-        x = transformAttr->rotations.x;
-        y = transformAttr->rotations.y;
-        z = transformAttr->rotations.z;
+        x = rotations.x;
+        y = rotations.y;
+        z = rotations.z;
         ImGui::Text("Rotation :");
 
         ImGui::Columns(2, "Rotation");
@@ -393,7 +401,7 @@ void imGuiPrintAttribute(ImGuiTransformationAttr* transformAttr){
                 ImGui::TableNextRow();
                 for (int j = 0; j < 4; j++) {
                     ImGui::TableSetColumnIndex(j);
-                    ImGui::Text("%1.2f", transformAttr->OriginalRotation.c[i * 4 + j]);
+                    ImGui::Text("%1.2f", OriginalRotation.c[i * 4 + j]);
                 }
             }
             ImGui::EndTable();
@@ -401,134 +409,39 @@ void imGuiPrintAttribute(ImGuiTransformationAttr* transformAttr){
 
         ImGui::Columns(1);
 
-        float dx = x - transformAttr->rotations.x;
-        float dy = y - transformAttr->rotations.y;
-        float dz = z - transformAttr->rotations.z;
+        float dx = x - rotations.x;
+        float dy = y - rotations.y;
+        float dz = z - rotations.z;
 
         if (dx != 0.0f) {
-            transformAttr->rotations.x = x;
-            transformAttr->rotations.y = 0;
-            transformAttr->rotations.z = 0;
-            transformAttr->OriginalRotation = rotationMatrixX(dx * 2 * M_PI / 360) * transformAttr->OriginalRotation;
+            rotations.x = x;
+            rotations.y = 0;
+            rotations.z = 0;
+            OriginalRotation = rotationMatrixX(dx * 2 * M_PI / 360) * OriginalRotation;
         }
         if (dy != 0.0f) {
-            transformAttr->rotations.x = 0;
-            transformAttr->rotations.y = y;
-            transformAttr->rotations.z = 0;
-            transformAttr->OriginalRotation = rotationMatrixY(dy * 2 * M_PI / 360) * transformAttr->OriginalRotation;
+            rotations.x = 0;
+            rotations.y = y;
+            rotations.z = 0;
+            OriginalRotation = rotationMatrixY(dy * 2 * M_PI / 360) * OriginalRotation;
         }
         if (dz != 0.0f) {
-            transformAttr->rotations.x = 0;
-            transformAttr->rotations.y = 0;
-            transformAttr->rotations.z = z;
-            transformAttr->OriginalRotation = rotationMatrixZ(dz * 2 * M_PI / 360) * transformAttr->OriginalRotation;
+            rotations.x = 0;
+            rotations.y = 0;
+            rotations.z = z;
+            OriginalRotation = rotationMatrixZ(dz * 2 * M_PI / 360) * OriginalRotation;
         }
-
         ImGui::TreePop();
     }
 }
 
 
 void ImGuiTransformationAttr::updateAttr(const mat4& transformation) {
-    mat4 inv = inverse(transformation);
-    translation = -inv.extractTranslation();
-    mat4 tmp = transformation * translationMatrix(-translation);
-    scales = tmp.extractScale();
-    tmp = tmp * scaleMatrix(vec3(1 / scales.x, 1 / scales.y, 1 / scales.z));
-    tmp = tmp.extractRotation(); //for stability
+    extract_transormations(transformation);
+}
 
-    mat4 dRot = tmp * transpose(OriginalRotation);
-    //tmp = Rot(Z+dZ)*Rot(Y+dY)*Rot(X+dX) * originalRotation
-    //dRot = Rot(Z+dZ)*Rot(Y+dY)*Rot(X+dX)
-    //dRot = Rot(Z+dZ)*Rot(Y+dY)*Rot(dX)*RotX
-    // 
-    //assume dX is near 0 i.e sin is bijectif and cos is > 0
-    dRot = dRot * rotationMatrixX(-rotations.x);
-    //dRot' = dRot*Rot(-X)
-    //dRot' = Rot(Z+dZ)*Rot(Y+dY)*Rot(dX)*RotX*Rot(-X)
-    //dRot' = Rot(Z+dZ)*Rot(Y+dY)*Rot(dX)
-    //dRot'_1 = Rot(-dX)*Rot(-Y-dY)*Rot(-Z-dZ)
-    //
-    //for z = (0, 0, 1) eigenvector of Rot(-Z-dZ):
-    //dRot'_1*z = Rot(-dX)*Rot(-Y-dY)*z
-    //         = Rot(-dX)
-
-    //Rot(Y)= |cos(Y)  0 sin(Y)
-    //        |0       1     0
-    //        |-sin(Y) 0 cos(Y)
-
-    //dRot'_1*z = Rot(-dX)*(sin(-Y-dY), 0, cos(-Y-dY))
-
-    //Rot(X)= |1 0      0
-    //        |0 cos(X) -sin(X)
-    //        |0 sin(X) cos(X)
-
-    //dRot'_1*z = (sin(-Y-dY), -sin(-dX)*cos(-Y-dY), cos(-dX)*cos(-Y-dY))
-
-    //sin(a+b) = sin(a)cos(b) + cos(a)sin(b)
-    //cos(a+b) = cos(a)cos(b) - sin(a)sin(b)
-
-
-    //dRot'' = Rot(-Z)*dRot*Rot(-X)
-    //dRot'' = Rot(-Z)*Rot(Z+dZ)*Rot(Y+dY)*Rot(dX)*RotX*Rot(-X)
-    //dRot'' = Rot(dZ)*Rot(Y+dY)*Rot(dX)
-
-    //for y = (0, 1, 0)
-    
-    //Rot(X)= |1 0      0
-    //        |0 cos(X) -sin(X)
-    //        |0 sin(X) cos(X)
-
-    //dRot''*y = Rot(dZ)*Rot(Y+dY)*(0, cos(dX), sin(dX))
-
-    //Rot(Y)= |cos(Y)  0 sin(Y)
-    //        |0       1     0
-    //        |-sin(Y) 0 cos(Y)
-
-    //dRot''*y = Rot(dZ)*(sin(Y+dY)sin(dX), cos(dX), cos(Y+dY)sin(dX))
-
-    //Rot(Z)= |cos(Z) -sin(Z) 0
-    //        |sin(Z) cos(Z)  0
-    //        |0      0       1
-
-    //dRot''*y = (cos(dZ)sin(Y+dY)sin(dX) -sin(dZ)cos(dX),
-    //            sin(dZ)sin(Y+dY)sin(dX) +cos(dZ)cos(dX),
-    //            cos(Y+dY)sin(dX) 
-
-
-
-    //Rot(X)= |1 0      0
-    //        |0 cos(X) -sin(X)
-    //        |0 sin(X) cos(X)
-
-    //Rot(Y)= |cos(Y)  0 sin(Y)
-    //        |0       1     0
-    //        |-sin(Y) 0 cos(Y)
-
-    //Rot(Z)= |cos(Z) -sin(Z) 0
-    //        |sin(Z) cos(Z)  0
-    //        |0      0       1
-
-    //Rot(Z)*Rot(Y)*Rot(X) = 
-    //
-    // Rot(Z)*
-    // |cos(Y)      sin(Y)sin(X)        sin(Y)cos(X)
-    // |0           cos(X)              -sin(X)
-    // |-sin(Y)     sin(X)cos(Y)        cos(X)cos(Y)
-    //
-    // =
-    //
-    // |cos(Z)cos(Y)    
-    // |
-    // |
-
-    //compute the two angles values from : https://eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
-    //choos the closest one to my problem
-    //IF cos(Y)~ 0 <=> sin(Y)~1
-
-
-
-    rotations = vec3();
+mat4 ImGuiTransformationAttr::getTansformation() const {
+    return OriginalRotation * scaleMatrix(scales) * translationMatrix(translation);
 }
 
 #endif

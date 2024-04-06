@@ -42,7 +42,9 @@ GLFWwindow* Engine::initWindows(int width, int height)
     GLFWwindow* window = glfwCreateWindow(width, height, "Prender", NULL, NULL);
     if (window == NULL)
     {
+#ifdef CONSOLE
         std::cout << "Failed to create GLFW window" << std::endl;
+#endif
         glfwTerminate();
         return nullptr;
     }
@@ -50,7 +52,9 @@ GLFWwindow* Engine::initWindows(int width, int height)
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
+#ifdef CONSOLE
         std::cout << "Failed to initialize GLAD" << std::endl;
+#endif
         return nullptr;
     }
     glViewport(0, 0, width, height);

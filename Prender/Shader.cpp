@@ -4,7 +4,6 @@
 
 #include <fstream>
 #include <sstream>
-#include <iostream>
 
 //! initialise the used shader
 ShaderType Shader::loadedShader = ShaderType::NO_SHADER;
@@ -76,7 +75,9 @@ std::string Shader::readFile(const char* file) const {
 		inputStream.close();
 	}
 	catch (std::ifstream::failure e) {
+#ifdef CONSOLE
 		std::cout << "[ERROR] shader could not read file '" << file << "'" << std::endl;
+#endif
 	}
 	return stream.str();
 }
@@ -93,10 +94,12 @@ GLuint Shader::compileShader(const char* file, GLenum shader) {
 	int success;
 	char infoLog[512];
 	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
+#ifdef CONSOLE
 	if (!success) {
 		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
 		std::cout << "[ERROR] at compilation of shader : " << file << std::endl << infoLog << std::endl;
 	}
+#endif
 	return shaderID;
 }
 Shader::Shader(ShaderType shaderType) : shaderType(shaderType)
@@ -133,10 +136,12 @@ Shader::Shader(ShaderType shaderType) : shaderType(shaderType)
 	int success;
 	char infoLog[512];
 	glGetShaderiv(program, GL_LINK_STATUS, &success);
+#ifdef CONSOLE
 	if (!success) {
 		glGetShaderInfoLog(program, 512, NULL, infoLog);
 		std::cout << "[ERROR] Linking of shader" << std::endl << infoLog << std::endl;
 	}
+#endif
 
 	if(used_shader.vertexShader)
 		glDeleteShader(vertexShaderID);
@@ -157,7 +162,6 @@ void Shader::use() const {
 	if (Shader::loadedShader != shaderType) {
 		Shader::loadedShader = shaderType;
 		glUseProgram(program);
-		std::cout << "loaded shader " << shaderType << std::endl;
 	}
 	
 }

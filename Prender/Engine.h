@@ -1,15 +1,14 @@
 #pragma once
 
 #include "main.h"
-#include <stdio.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
+#include <vector>
 
 class Engine;
 
 #include "src/scenes/scene.h"
-#include <vector>
+
 
 typedef double Time; //for readability
 

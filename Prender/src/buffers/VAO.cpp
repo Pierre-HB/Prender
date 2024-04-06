@@ -1,5 +1,4 @@
 #include "VAO.h"
-#include <iostream>
 #include <cassert>
 
 

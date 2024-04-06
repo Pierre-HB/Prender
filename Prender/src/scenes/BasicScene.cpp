@@ -1,21 +1,19 @@
 #include "BasicScene.h"
 #include "../algebra/Matrix4.h"
-#include <iostream>
 #include "../light/Light.h"
 #include "../light/Light_Constant_Point.h"
 
 
 BasicScene::BasicScene() {
     lightManager = new LightManager(vec4(0.1, 0.2, 0.1, 1));
-    //texture = new Texture("debug.jpeg", 0);
+    debug = new Texture("debug.jpeg", 0);
     texture = new Texture("container.jpg", 0);
     texture_smiley = new Texture("awesomeface.png", 1);
 
     shader_test = new Shader(DEFAULT_P_N_UV);
     lightManager->bindShader(shader_test);
     
-    camera = new PerspectiveCamera(800.0f / 600.0f, 3.14f/2, 0.1f, 1000.0f);
-    camera->moveWorld(translationMatrix(vec3(0, 0, 30)));
+    camera = new PerspectiveCamera(800.0f / 600.0f, 3.14f/2, 0.1f, 1000.0f, translationMatrix(vec3(0, 0, 30)));
 
     object = new Object3D_P_N_UV("models/teapot.obj", texture);
 
@@ -24,7 +22,6 @@ BasicScene::BasicScene() {
     lightManager->addLight(new Light_Constant_Point(vec3(0.1, 0.5, 1), vec3(0, -10, -15)));
     lightManager->addLight(new Light_Constant_Point(vec3(1, 0.5, 0.1), vec3(-15, -10, -15)));
 
-    transfo = new ImGuiTransformationAttr(transformationMatrix(vec3(1, 2, 3), vec3(8, 5, 3), vec3(-7, 42, 8)));
 
 }
 
@@ -43,7 +40,7 @@ void BasicScene::render() {
 
     //std::vector<lightCaster> lightCasters = Light::createLightCasterVertex(lights);
     //object->setLightCasterID(lightCasters);
-    object->setLightCasterID(lightManager->getLightCasters());
+    /*object->setLightCasterID(lightManager->getLightCasters());*/
     //Light::loadLight(lightCasters);
     
 
@@ -55,8 +52,6 @@ void BasicScene::render() {
     shader_test->setUniform("smiley", 1);
 
     object->draw();
-
-    imGuiPrintAttribute(transfo);
 
 }
 
@@ -76,12 +71,12 @@ void BasicScene::update(Engine* engine) {
 
     if (engine->toggleKeyState->forward) {
         std::vector<Light*> lights = lightManager->getLights();
-        std::cout << lights.size() << " light alive" << std::endl;
         lightManager->removeLight(lights[0]);
 
         lights = lightManager->getLights();
-        std::cout << lights.size() << " light alive after" << std::endl;
     }
+
+    object->setLightCasterID(lightManager->getLightCasters());
         
     
         
