@@ -5,9 +5,10 @@
 #include <string>
 #include "src/algebra/Algebra.h"
 
-
+//! the list of shader beeing usable
 enum ShaderType { NO_SHADER, DEFAULT_P_N_UV };
 
+//! set of bool saying if a shader use a vertex/geometry/fragment/compute shader
 struct usedShader
 {
     bool vertexShader;
@@ -18,35 +19,42 @@ struct usedShader
     usedShader(bool useVertexShader, bool useGeometryShader, bool useFragmentShader, bool useComputeShader) : vertexShader(useVertexShader), geometryShader(useGeometryShader), fragmentShader(useFragmentShader), computeShader(useComputeShader) {}
 
 };
+
+//! return the used shader of a specific shader type
 usedShader get_used_shader(ShaderType shader);
 
-
+//! return the vertex shader code of a specific shader
 const char* get_vertex_shader(ShaderType shader);
 
+//! return the geometry shader code of a specific shader
 const char* get_geometry_shader(ShaderType shader);
 
+//! return the fragment shader code of a specific shader
 const char* get_fragment_shader(ShaderType shader);
 
+//! return the compute shader code of a specific shader
 const char* get_compute_shader(ShaderType shader);
 
-
+//! a shader
 class Shader
 {
 private:
 
-    GLuint program;
+    GLuint program; //! shader ID
 
-    static ShaderType loadedShader;
+    static ShaderType loadedShader; //! the shadeer type beeing loaded (to avoid reloading the same shader)
 
     ShaderType shaderType;
 
+    //! reade a file
     std::string readFile(const char* file) const;
 
+    //! comile a shader
     GLuint compileShader(const char* file, GLenum shader);
 
 public:
 
-    //! constructor from a vertex and fragment shader
+    //! constructor from a shader type
     Shader(ShaderType shaderType);
 
     //! destructor

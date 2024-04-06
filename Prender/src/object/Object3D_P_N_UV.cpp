@@ -131,12 +131,6 @@ void Object3D_P_N_UV::draw() {
 }
 
 void Object3D_P_N_UV::setLightCasterID(const std::vector<lightCaster>& lightCasters) {
-	//lightCasterID[i];
-	/*std::cout << "start : ";
-	for (int i = 0; i < maxLight; i++) {
-		std::cout << lightCasterID[i] << " ";
-	}
-	std::cout << std::endl;*/
 
 	mat4 inv_ow = inverse(world * object);
 	float best_intensity[maxLight]{};
@@ -167,11 +161,6 @@ void Object3D_P_N_UV::setLightCasterID(const std::vector<lightCaster>& lightCast
 			}
 		}
 	}
-	/*std::cout << "end   : ";
-	for (int i = 0; i < maxLight; i++) {
-		std::cout << lightCasterID[i] << " ";
-	}
-	std::cout << std::endl;*/
 }
 
 

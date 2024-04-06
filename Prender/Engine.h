@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 
+//! the clock of the system, will skedule renders and updates
 class Engine;
 
 #include "src/scenes/scene.h"
@@ -12,6 +13,7 @@ class Engine;
 
 typedef double Time; //for readability
 
+//! a structure for gathering time data
 struct TimeData
 {
 	static const int UPDATE = 0;
@@ -49,6 +51,7 @@ struct TimeData
 	}
 };
 
+//! a structure to know the exact state of the keys
 struct keyStates
 {
 	//! is this action pressed
@@ -60,6 +63,7 @@ struct keyStates
 	keyStates() : forward(false), backward(false), left(false), right(false) {}
 };
 
+//! the clock of the system, will skedule renders and updates
 class Engine
 {
 private:
@@ -83,7 +87,7 @@ private:
 	keyStates* previousKeyState; //previous actions states
 
 #ifdef IMGUI
-	ImGuiManager* imGuiManager;
+	ImGuiManager* imGuiManager; //! ui handler
 #endif
 
 public:
@@ -92,26 +96,35 @@ public:
 
 	static keyStates* bufferKeyState; // buffer of states to gather inputs during ticks
 
-
+	//! initialize the game
 	Engine();
 
 	~Engine();
 
+	//! create a window
 	GLFWwindow* initWindows(int width, int height);
 
+	//! the update of the game
 	void update();
 
+	//! the render of the game
 	void render();
 
+	//! start the game loop
 	void run();
 
+	//! add a scene in the scene list. This will NOT change the current scene
 	void addScene(Scene* scene);
 
+	//! Change the current scene
 	void setActiveScene(int sceneID);
 
+	//! swap the buffers input to update them
 	void updateInput();
 
-	double get_fps();
+	//! get the FPS of the engin
+	double get_fps() const;
 
-	double get_tps();
+	//! get the TPS of the engin
+	double get_tps() const;
 };

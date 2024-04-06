@@ -106,6 +106,7 @@ ImGuiManager::ImGuiManager() {
 	object3DChilds[0] = object3dPNUV;
 	ImGuiObjectHierarchy* Object3DHierarchy = new ImGuiObjectHierarchy("Object3D", object3DChilds);
 
+
 	//Camera hierarchy =========================================
 	ImGuiObjectHierarchy* perspectiveCamera = new ImGuiObjectHierarchy("Perspective Camera", ImGuiObjectType::UTILS_PERSPECTIVE_CAMERA);
 

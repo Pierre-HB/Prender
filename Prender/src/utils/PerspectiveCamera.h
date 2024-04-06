@@ -3,6 +3,7 @@
 #include "Camera.h"
 
 #ifdef IMGUI
+//! data for a Perpective Camera UI
 struct imGuiPerspectiveCameraAttr {
 	float aspect_ratio;
 	float fov;
@@ -10,13 +11,14 @@ struct imGuiPerspectiveCameraAttr {
 	float z_far;
 	void* parentAttr;
 
-
-
+	//! Constructor
 	imGuiPerspectiveCameraAttr(float aspect_ratio, float fov, float z_near, float z_far, void* parentAttr) :aspect_ratio(aspect_ratio), fov(fov), z_near(z_near), z_far(z_far), parentAttr(parentAttr) {}
 };
 
+//! a perspective camera
 class PerspectiveCamera : public Camera, public ImGuiPrintable
 #else
+//! a perspective camera
 class PerspectiveCamera : public Camera
 #endif
 {
@@ -29,21 +31,28 @@ private:
 
 public:
 
+	//! Constructor of a Perspective Camera
 	PerspectiveCamera(float aspect_ratio, float fov, float z_near, float z_far, const mat4& camera = mat4::identity());
 
 	~PerspectiveCamera();
 
+	//! moove the camera in the world space
 	void moveWorld(const mat4& transormation);
 
+	//! moove the camera in the view space
 	void moveView(const mat4& transormation);
 
 #ifdef IMGUI
+	//! \copydoc ImGuiPrintable::getAttribute()
 	virtual void* getAttribute() const;
 
+	//! \copydoc ImGuiPrintable::updateAttribute()
 	virtual void updateAttribute(void* attr) const;
 
+	//! \copydoc ImGuiPrintable::setAttribute()
 	virtual void setAttribute(void* attr);
 
+	//! \copydoc ImGuiPrintable::imGuiPrintAttribute()
 	virtual void imGuiPrintAttribute(void* attr) const;
 #endif
 };

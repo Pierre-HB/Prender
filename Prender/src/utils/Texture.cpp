@@ -45,7 +45,7 @@ Texture::Texture(const char* file, int texture_unit) : textureID(), texture_unit
 #endif
 			break;
 		}
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
 		//compute the mipmap, may not be alwayse usefull
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}

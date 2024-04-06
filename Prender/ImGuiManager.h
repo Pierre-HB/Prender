@@ -6,20 +6,22 @@
 
 
 #ifdef IMGUI
+//! node of the instance tree
 struct ImGuiObjectHierarchy;
+//! virtual class defining the neccessary method to render the ui of an object
 class ImGuiPrintable;
+//! the UI manager
 class ImGuiManager;
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-//#include "src/light/Light_Constant_Point.h"
-class ImGuiPrintable;
 
-
+//! types of object (to put them in the right place in the instance tree)
 enum class ImGuiObjectType { LIGHT_CONSTANT_POINT, OBJECT_OBJECT3D_DEFAULT_P_N_UV, UTILS_PERSPECTIVE_CAMERA, UTILS_TEXTURE, MaxObject };
 
 
 
+//! node of the instance tree
 
 struct ImGuiObjectHierarchy {
 	const char* name;
@@ -27,22 +29,26 @@ struct ImGuiObjectHierarchy {
 	ImGuiObjectType type;
 	size_t nbInstance;
 
-	//! node intialisation
+	//! Node
 	ImGuiObjectHierarchy(const char* name, std::vector<ImGuiObjectHierarchy*> childs) : name(name), childs(childs), type(ImGuiObjectType::MaxObject), nbInstance() {}
 	
+	//! Leaf
 	ImGuiObjectHierarchy(const char* name, ImGuiObjectType type) : name(name), childs(), type(type), nbInstance() {}
 
+	//! compute the number of instance in this category
 	void computeNbInstance();
 
+	//! draw the ui
 	void render();
 };
 
 
 
 
-
+//! give a category name to each object type
 const char* imGuiGetObjectName(ImGuiObjectType type);
 
+//! gather an object, it's attributes, it's name in the instance tree and a boolean saying if it's rendered or not
 struct obj_attr
 {
 	ImGuiPrintable* obj;
@@ -56,7 +62,7 @@ struct obj_attr
 
 };
 
-//#include "src/light/Light_Constant_Point.h"
+//! virtual class defining the neccessary method to render the ui of an object
 class ImGuiPrintable
 {
 public:
@@ -74,19 +80,25 @@ public:
 	virtual void imGuiPrintAttribute(void* attr) const = 0;
 };
 
+//! The ui manager
 class ImGuiManager
 {
 private:
 	static std::vector<std::vector<obj_attr>> objects;
 	ImGuiObjectHierarchy* hierarchy;
 public:
+	//! constructor
 	ImGuiManager();
 
 	~ImGuiManager();
 	
+	//! add an object in the instance tree
 	static void addObject(ImGuiObjectType type, ImGuiPrintable* obj, std::string name);
+
+	//! add an object in the instance tree
 	static void addObject(ImGuiObjectType type, ImGuiPrintable* obj);
 
+	//! remove an object frome the instance tree
 	static void removeObject(ImGuiObjectType type, ImGuiPrintable* obj);
 
 	//! to call at start of update loop to insert modified attributes (by ImGUI) in the code
@@ -95,8 +107,10 @@ public:
 	//! to call at the end of update loop to update the attributes after the loop's changes
 	void updateAttributes();
 
-	//! to call during render phase to update attributes in ImGui
+	//! Draw the instnce tree
 	void renderInstancesTree();
+
+	//! draw the ui of each opened object
 	void renderInstances();
 
 	//! To call at the begening of the render pass to initialise the on screen console
@@ -105,12 +119,16 @@ public:
 	//! To call at the end of the render pass to close the on screen console
 	void endConsole() const;
 
+	//! clear the ImGui frame
 	static void startFrame();
 
+	//! draw the ImGui frame
 	static void endFrame();
 
+	//! initialize the IGui context
 	static void initializeContext(GLFWwindow* window);
 
+	//! destroy the ImGui context
 	static void destroyContext();
 
 	friend void ImGuiObjectHierarchy::computeNbInstance();

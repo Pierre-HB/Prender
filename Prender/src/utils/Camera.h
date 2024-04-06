@@ -4,15 +4,18 @@
 #include "../algebra/Algebra.h"
 
 #ifdef IMGUI
+//! Data for the Camera UI
 struct imGuiCameraAttr {
 	ImGuiTransformationAttr camera;
 
-
+	//! constructor
 	imGuiCameraAttr(const mat4& camera) : camera(ImGuiTransformationAttr(camera, "camera")) {}
 };
 
+//! a virtual class for cameras
 class Camera : public ImGuiPrintable
 #else
+//! a virtual class for cameras
 class Camera
 #endif
 {
@@ -35,12 +38,16 @@ public:
 	mat4 getProjectionMatrix();
 
 #ifdef IMGUI
+	//! \copydoc ImGuiPrintable::getAttribute()
 	virtual void* getAttribute() const;
 
+	//! \copydoc ImGuiPrintable::updateAttribute()
 	virtual void updateAttribute(void* attr) const;
 
+	//! \copydoc ImGuiPrintable::setAttribute()
 	virtual void setAttribute(void* attr);
 
+	//! \copydoc ImGuiPrintable::imGuiPrintAttribute()
 	virtual void imGuiPrintAttribute(void* attr) const;
 #endif
 };

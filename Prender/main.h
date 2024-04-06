@@ -1,6 +1,10 @@
 #pragma once
 
+//! Main include of the engine
+
+//! will create a console window and write in it if define
 #define CONSOLE
+//! will create an ui if define
 #define IMGUI
 
 #ifdef IMGUI

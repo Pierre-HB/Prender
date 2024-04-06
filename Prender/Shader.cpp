@@ -25,7 +25,6 @@ const char* get_vertex_shader(ShaderType shader) {
 		return "";
 	case DEFAULT_P_N_UV:
 		return "src/shaders/vertexUVShader.glsl";
-		//no default case because every enum type is tested
 	}
 }
 
@@ -36,7 +35,6 @@ const char* get_geometry_shader(ShaderType shader) {
 		return "";
 	case DEFAULT_P_N_UV:
 		return "";
-		//no default case because every enum type is tested
 	}
 }
 
@@ -47,7 +45,6 @@ const char* get_fragment_shader(ShaderType shader) {
 		return "";
 	case DEFAULT_P_N_UV:
 		return "src/shaders/fragmentUVShader.glsl";
-		//no default case because every enum type is tested
 	}
 }
 
@@ -58,7 +55,6 @@ const char* get_compute_shader(ShaderType shader) {
 		return "";
 	case DEFAULT_P_N_UV:
 		return "";
-		//no default case because every enum type is tested
 	}
 }
 

@@ -226,7 +226,6 @@ void Engine::run() {
         }
         else {
             Time wait = std::min(nextRender, nextUpdate) - start;
-            //timeData.sleepedTime += wait;
             std::this_thread::sleep_for(std::chrono::microseconds(static_cast<long long>(wait*1000000)));//wait is in second
             timeData.lastLoopAction = TimeData::IDLE;
         }
@@ -242,10 +241,10 @@ void Engine::setActiveScene(int sceneID) {
     activeScene = sceneID;
 }
 
-double Engine::get_fps() {
+double Engine::get_fps() const {
     return fps;
 }
 
-double Engine::get_tps() {
+double Engine::get_tps()const  {
     return tps;
 }

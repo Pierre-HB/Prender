@@ -132,8 +132,6 @@ mat4 scaleMatrix(const vec3& scales);
 mat4 transformationMatrix(const vec3& rotations, const vec3& scales, const vec3& translation);
 
 #ifdef IMGUI
-struct ImGuiTransformationAttr;
-
 struct ImGuiTransformationAttr
 {
 	vec3 translation;
@@ -153,8 +151,10 @@ struct ImGuiTransformationAttr
 	//! extract the translation, scale and rotation from a transformation close to the attributes
 	void updateAttr(const mat4& transformation);
 
+	//! reconstruct the transformation and return it
 	mat4 getTansformation() const;
 
+	//! draw the ui to modify attributes
 	void imGuiPrintAttribute();
 };
 

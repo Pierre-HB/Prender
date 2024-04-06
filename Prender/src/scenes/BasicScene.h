@@ -8,6 +8,7 @@
 #include "../utils/PerspectiveCamera.h"
 #include "../object/Object3D_P_N_UV.h"
 
+//! a small scene to showcase features of the engine
 class BasicScene : public Scene
 {
 private:
@@ -20,14 +21,14 @@ private:
 
 	LightManager* lightManager;
 
-
-
 public:
 	BasicScene();
 
 	~BasicScene();
 
+	//! render of the scene
 	void render();
 
+	//! update of the scene
 	void update(Engine* engine);
 };
