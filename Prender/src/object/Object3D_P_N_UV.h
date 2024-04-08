@@ -14,7 +14,17 @@ struct imGuiObject3D_P_N_UVAttr {
 	void* parentAttr;
 
 	//! constructor
-	imGuiObject3D_P_N_UVAttr(GLuint textureID, int nb_vertex, const std::vector<int>& lightCasterID, void* parentAttr) : textureID(textureID), nb_vertex(nb_vertex), lightCasterID(lightCasterID), parentAttr(parentAttr) {}
+	imGuiObject3D_P_N_UVAttr(GLuint textureID, int nb_vertex, const std::vector<int>& lightCasterID, void* parentAttr) : textureID(textureID), nb_vertex(nb_vertex), lightCasterID(lightCasterID), parentAttr(parentAttr) {
+#ifdef DEBUG
+		debug::NB_ATTR++;
+#endif
+	}
+
+	~imGuiObject3D_P_N_UVAttr() {
+#ifdef DEBUG
+		debug::NB_ATTR--;
+#endif
+	}
 };
 
 //! a 3D obeject with normals and uv. Use an albedo texture and WILL use a normal map and a material map
@@ -64,5 +74,8 @@ public:
 
 	//! \copydoc ImGuiPrintable::imGuiPrintAttribute()
 	virtual void imGuiPrintAttribute(void* attr) const;
+
+	//! \copydoc ImGuiPrintable::deleteAttribute()
+	virtual void deleteAttribute(void* attr) const;
 #endif
 };

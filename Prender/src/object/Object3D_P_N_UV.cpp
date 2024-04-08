@@ -9,6 +9,9 @@ Object3D_P_N_UV::Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> nor
 #ifdef IMGUI
 	ImGuiManager::addObject(ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV, this);
 #endif
+#ifdef DEBUG
+	debug::NB_INSTANCES++;
+#endif
 }
 
 Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(texture), nb_vertex(), lightCasterID() {
@@ -93,15 +96,21 @@ Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(t
 		}
 	}
 	vao->setPoints(vertices, indices);
-	nb_vertex = indices.size();
+	nb_vertex = static_cast<int>(indices.size());
 #ifdef IMGUI
 	ImGuiManager::addObject(ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV, this);
+#endif
+#ifdef DEBUG
+	debug::NB_INSTANCES++;
 #endif
 }
 
 Object3D_P_N_UV::~Object3D_P_N_UV() {
 #ifdef IMGUI
 	ImGuiManager::removeObject(ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV, this);
+#endif
+#ifdef DEBUG
+	debug::NB_INSTANCES--;
 #endif
 }
 
@@ -146,7 +155,7 @@ void Object3D_P_N_UV::setLightCasterID(const std::vector<lightCaster>& lightCast
 			continue;
 		float d = lightCasters[i].falloff == 0.0f ? 1 : length(inv_ow * lightCasters[i].position); //if falloff = 0 d has no importance. avoid computing d for light at infinity
 		float intensity = dot(lightCasters[i].lightColor, vec3(0.25, 0.5, 0.25)) / powf(d, lightCasters[i].falloff);
-		int intensityIndex = i;
+		int intensityIndex = static_cast<int>(i);
 		for (int j = 0; j < maxLight; j++) {
 			if (best_intensity[j] < intensity) {
 				//swap intensity
@@ -211,5 +220,10 @@ void Object3D_P_N_UV::imGuiPrintAttribute(void* attr) const {
 		}
 		ImGui::EndListBox();
 	}
+}
+
+void Object3D_P_N_UV::deleteAttribute(void* attr) const {
+	Object3D::deleteAttribute(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->parentAttr);
+	delete static_cast<imGuiObject3D_P_N_UVAttr*>(attr);
 }
 #endif

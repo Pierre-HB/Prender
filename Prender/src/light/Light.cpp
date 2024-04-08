@@ -1,14 +1,21 @@
 #include "Light.h"
 
 Light::Light(const vec3& lightColor, float falloff, const vec3& position, float cos_angle_min, const vec3& direction, float cos_angle_max) : lightColor(lightColor), falloff(falloff), position(position), cos_angle_min(cos_angle_min), direction(direction), cos_angle_max(cos_angle_max) {
-
+#ifdef DEBUG
+    debug::NB_INSTANCES++;
+#endif
 }
 
 Light::Light() : lightColor(), falloff(-1.0f), position(), cos_angle_min(), direction(), cos_angle_max() {
-
+#ifdef DEBUG
+    debug::NB_INSTANCES++;
+#endif
 }
 
 Light::~Light() {
+#ifdef DEBUG
+    debug::NB_INSTANCES--;
+#endif
 }
 
 lightCaster Light::getLightCaster() const {
@@ -25,10 +32,18 @@ LightManager::LightManager(const vec4& ambiantColor) : lightCatserUniformBuffer(
     glBufferData(GL_UNIFORM_BUFFER, MAX_LIGHT * sizeof(lightCaster), NULL, GL_STATIC_DRAW);
     glBindBufferBase(GL_UNIFORM_BUFFER, lightBindingPoint, lightCatserUniformBuffer);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+#ifdef DEBUG
+    debug::NB_OPENGL_PTR++;
+#endif
 }
 
 LightManager::~LightManager() {
     glDeleteBuffers(1, &lightCatserUniformBuffer);
+    for (size_t i = 0; i < lights.size(); i++)
+        delete lights[i];
+#ifdef DEBUG
+    debug::NB_OPENGL_PTR--;
+#endif
 }
 
 void LightManager::addLight(Light* light) {

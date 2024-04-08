@@ -1,11 +1,21 @@
 #include "VBO.h"
+#include "../../main.h"
 
 VBO::VBO() : vbo() {
 	glGenBuffers(1, &vbo);
+#ifdef DEBUG
+	debug::NB_INSTANCES++;
+	debug::NB_OPENGL_PTR++;
+#endif
 }
 
 VBO::~VBO() {
+
 	glDeleteBuffers(1, &vbo);
+#ifdef DEBUG
+	debug::NB_INSTANCES--;
+	debug::NB_OPENGL_PTR--;
+#endif
 }
 
 void VBO::setData(GLsizeiptr size, const void* data, GLenum usage) const {

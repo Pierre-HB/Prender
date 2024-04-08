@@ -20,6 +20,22 @@ const char* imGuiGetObjectName(ImGuiObjectType type) {
 	}
 }
 
+const char* imGuiGetObjectName(int typeNumber) {
+	switch (typeNumber)
+	{
+	case static_cast<int>(ImGuiObjectType::LIGHT_CONSTANT_POINT):
+		return "Light Point Constant";
+	case static_cast<int>(ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV):
+		return "Object P.N.UV";
+	case static_cast<int>(ImGuiObjectType::UTILS_PERSPECTIVE_CAMERA):
+		return "Perspective Camera";
+	case static_cast<int>(ImGuiObjectType::UTILS_TEXTURE):
+		return "Texture";
+	default:
+		return "UNKOWN";
+	}
+}
+
 void ImGuiObjectHierarchy::computeNbInstance() {
 	nbInstance = 0;
 	if (type != ImGuiObjectType::MaxObject)
@@ -35,8 +51,8 @@ void ImGuiObjectHierarchy::render() {
 		ImGui::BeginDisabled();
 	if (type != ImGuiObjectType::MaxObject) {
 		for (size_t i = 0; i < ImGuiManager::objects[static_cast<size_t>(type)].size(); i++) {
-			if (ImGui::Button(ImGuiManager::objects[static_cast<size_t>(type)][i].name.c_str())) {
-				ImGuiManager::objects[static_cast<size_t>(type)][i].open = !ImGuiManager::objects[static_cast<size_t>(type)][i].open;
+			if (ImGui::Button(ImGuiManager::objects[static_cast<size_t>(type)][i]->name.c_str())) {
+				ImGuiManager::objects[static_cast<size_t>(type)][i]->open = !ImGuiManager::objects[static_cast<size_t>(type)][i]->open;
 			}
 		}
 	}
@@ -85,7 +101,7 @@ void ImGuiManager::destroyContext() {
 	ImGui::DestroyContext();
 }
 
-std::vector<std::vector<obj_attr>> ImGuiManager::objects = std::vector<std::vector<obj_attr>>(static_cast<size_t>(ImGuiObjectType::MaxObject));
+std::vector<std::vector<obj_attr*>> ImGuiManager::objects = std::vector<std::vector<obj_attr*>>(static_cast<size_t>(ImGuiObjectType::MaxObject));
 
 
 
@@ -130,12 +146,23 @@ ImGuiManager::ImGuiManager() {
 	globalChilds[3] = textureHierarchy;
 
 	hierarchy = new ImGuiObjectHierarchy("Instances", globalChilds);
-
+#ifdef DEBUG
+	debug::NB_MAIN_INSTANCES++;
+#endif
 }
 
 
 ImGuiManager::~ImGuiManager() {
-
+	delete hierarchy;
+#ifdef CONSOLE
+	for (size_t i = 0; i < objects.size(); i++) {
+		if (objects[i].size() != 0)
+			std::cout << "[WARNING] there are still " << objects[i].size() << " object of type " << imGuiGetObjectName(static_cast<int>(i)) << " alive." << std::endl;
+	}
+#endif
+#ifdef DEBUG
+	debug::NB_MAIN_INSTANCES--;
+#endif	
 }
 
 void ImGuiManager::addObject(ImGuiObjectType type, ImGuiPrintable* obj) {
@@ -145,15 +172,16 @@ void ImGuiManager::addObject(ImGuiObjectType type, ImGuiPrintable* obj) {
 }
 
 void ImGuiManager::addObject(ImGuiObjectType type, ImGuiPrintable* obj, std::string name) {
-
-	ImGuiManager::objects[static_cast<size_t>(type)].push_back(obj_attr(obj, obj->getAttribute(), name));
+	ImGuiManager::objects[static_cast<size_t>(type)].push_back(new obj_attr(obj, obj->getAttribute(), name));
 
 }
 
 void ImGuiManager::removeObject(ImGuiObjectType type, ImGuiPrintable* obj) {
 	for (size_t i = 0; i < ImGuiManager::objects[static_cast<size_t>(type)].size(); i++) {
-		if (ImGuiManager::objects[static_cast<size_t>(type)][i].obj == obj) {
+		if (ImGuiManager::objects[static_cast<size_t>(type)][i]->obj == obj) {
+			delete objects[static_cast<size_t>(type)][i];
 			ImGuiManager::objects[static_cast<size_t>(type)].erase(ImGuiManager::objects[static_cast<size_t>(type)].begin() + i);
+
 			return;
 		}
 	}
@@ -162,7 +190,7 @@ void ImGuiManager::removeObject(ImGuiObjectType type, ImGuiPrintable* obj) {
 void ImGuiManager::setAttributes() {
 	for (size_t i = 0; i < objects.size(); i++) {
 		for (size_t j = 0; j < objects[i].size(); j++) {
-			objects[i][j].obj->setAttribute(objects[i][j].attr);
+			objects[i][j]->obj->setAttribute(objects[i][j]->attr);
 		}
 	}
 }
@@ -170,7 +198,7 @@ void ImGuiManager::setAttributes() {
 void ImGuiManager::updateAttributes() {
 	for (size_t i = 0; i < objects.size(); i++) {
 		for (size_t j = 0; j < objects[i].size(); j++) {
-			objects[i][j].obj->updateAttribute(objects[i][j].attr);
+			objects[i][j]->obj->updateAttribute(objects[i][j]->attr);
 		}
 	}
 }
@@ -184,9 +212,9 @@ void ImGuiManager::renderInstancesTree() {
 void ImGuiManager::renderInstances() {
 	for (size_t i = 0; i < objects.size(); i++) {
 		for (size_t j = 0; j < objects[i].size(); j++) {
-			if (objects[i][j].open) {
-				ImGui::Begin(objects[i][j].name.c_str(), &objects[i][j].open);
-				objects[i][j].obj->imGuiPrintAttribute(objects[i][j].attr);
+			if (objects[i][j]->open) {
+				ImGui::Begin(objects[i][j]->name.c_str(), &objects[i][j]->open);
+				objects[i][j]->obj->imGuiPrintAttribute(objects[i][j]->attr);
 				ImGui::End();
 			}
 		}

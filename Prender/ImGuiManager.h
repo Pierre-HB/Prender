@@ -22,7 +22,6 @@ enum class ImGuiObjectType { LIGHT_CONSTANT_POINT, OBJECT_OBJECT3D_DEFAULT_P_N_U
 
 
 //! node of the instance tree
-
 struct ImGuiObjectHierarchy {
 	const char* name;
 	std::vector<ImGuiObjectHierarchy*> childs;
@@ -30,36 +29,32 @@ struct ImGuiObjectHierarchy {
 	size_t nbInstance;
 
 	//! Node
-	ImGuiObjectHierarchy(const char* name, std::vector<ImGuiObjectHierarchy*> childs) : name(name), childs(childs), type(ImGuiObjectType::MaxObject), nbInstance() {}
+	ImGuiObjectHierarchy(const char* name, std::vector<ImGuiObjectHierarchy*> childs) : name(name), childs(childs), type(ImGuiObjectType::MaxObject), nbInstance() {
+#ifdef DEBUG
+		debug::NB_INSTANCES++;
+#endif
+	}
 	
 	//! Leaf
-	ImGuiObjectHierarchy(const char* name, ImGuiObjectType type) : name(name), childs(), type(type), nbInstance() {}
+	ImGuiObjectHierarchy(const char* name, ImGuiObjectType type) : name(name), childs(), type(type), nbInstance() {
+#ifdef DEBUG
+		debug::NB_INSTANCES++;
+#endif
+	}
+
+	~ImGuiObjectHierarchy() {
+		for (size_t i = 0; i < childs.size(); i++)
+			delete childs[i];
+#ifdef DEBUG
+		debug::NB_INSTANCES--;
+#endif
+	}
 
 	//! compute the number of instance in this category
 	void computeNbInstance();
 
 	//! draw the ui
 	void render();
-};
-
-
-
-
-//! give a category name to each object type
-const char* imGuiGetObjectName(ImGuiObjectType type);
-
-//! gather an object, it's attributes, it's name in the instance tree and a boolean saying if it's rendered or not
-struct obj_attr
-{
-	ImGuiPrintable* obj;
-	void* attr;
-	std::string name;
-	bool open;
-
-	obj_attr() : obj(nullptr), attr(nullptr), name(""), open(false) {}
-
-	obj_attr(ImGuiPrintable* obj, void* attr, std::string name) : obj(obj), attr(attr), name(name), open(false) {}
-
 };
 
 //! virtual class defining the neccessary method to render the ui of an object
@@ -69,6 +64,9 @@ public:
 
 	//! create the attribute struct and return a pointer to it
 	virtual void* getAttribute() const = 0;
+
+	//! destroy the attribut struct
+	virtual void deleteAttribute(void* attr) const = 0;
 
 	//! get a pointer to an attribut struct and update it
 	virtual void updateAttribute(void* attr) const = 0;
@@ -80,11 +78,48 @@ public:
 	virtual void imGuiPrintAttribute(void* attr) const = 0;
 };
 
+
+//! give a category name to each object type
+const char* imGuiGetObjectName(ImGuiObjectType type);
+const char* imGuiGetObjectName(int typeNumber);
+
+
+//! gather an object, it's attributes, it's name in the instance tree and a boolean saying if it's rendered or not
+struct obj_attr
+{
+	ImGuiPrintable* obj;
+	void* attr;
+	std::string name;
+	bool open;
+
+	obj_attr() : obj(nullptr), attr(nullptr), name(""), open(false) {
+#ifdef DEBUG
+		debug::NB_ATTR++;
+#endif
+	}
+
+	obj_attr(ImGuiPrintable* obj, void* attr, std::string name) : obj(obj), attr(attr), name(name), open(false) {
+#ifdef DEBUG
+		debug::NB_ATTR++;
+#endif
+	}
+
+	~obj_attr() {
+		if (attr != nullptr)
+			obj->deleteAttribute(attr);
+			
+#ifdef DEBUG
+		debug::NB_ATTR--;
+#endif
+	}
+
+};
+
 //! The ui manager
 class ImGuiManager
 {
 private:
-	static std::vector<std::vector<obj_attr>> objects;
+	static std::vector<std::vector<obj_attr*>> objects;
 	ImGuiObjectHierarchy* hierarchy;
 public:
 	//! constructor

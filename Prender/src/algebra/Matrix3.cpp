@@ -110,7 +110,7 @@ mat3 transpose(const mat3& m) {
 mat3 inverse(const mat3& m) {
 
 
-	double det = m.c[0] * (m.c[4] * m.c[8] - m.c[7] * m.c[5]) -
+	float det = m.c[0] * (m.c[4] * m.c[8] - m.c[7] * m.c[5]) -
 		m.c[1] * (m.c[3] * m.c[8] - m.c[5] * m.c[6]) +
 		m.c[2] * (m.c[3] * m.c[7] - m.c[4] * m.c[6]);
 

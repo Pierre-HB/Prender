@@ -60,7 +60,17 @@ struct keyStates
 	bool left;
 	bool right;
 
-	keyStates() : forward(false), backward(false), left(false), right(false) {}
+	keyStates() : forward(false), backward(false), left(false), right(false) {
+#ifdef DEBUG
+		debug::NB_INSTANCES++;
+#endif
+	}
+
+	~keyStates() {
+#ifdef DEBUG
+		debug::NB_INSTANCES--;
+#endif
+	}
 };
 
 //! the clock of the system, will skedule renders and updates

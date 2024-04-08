@@ -10,7 +10,17 @@ struct imGuiLightConstantPointAttr {
 	float intensity;
 
 	//! constructor
-	imGuiLightConstantPointAttr(const vec3& color, const vec3& position) : color(color), position(position), intensity(1) {}
+	imGuiLightConstantPointAttr(const vec3& color, const vec3& position) : color(color), position(position), intensity(1) {
+#ifdef DEBUG
+		debug::NB_ATTR++;
+#endif
+	}
+
+	~imGuiLightConstantPointAttr() {
+#ifdef DEBUG
+		debug::NB_ATTR--;
+#endif
+	}
 };
 
 //! a Point light with no falloff
@@ -38,6 +48,9 @@ public:
 
 	//! \copydoc ImGuiPrintable::imGuiPrintAttribute()
 	virtual void imGuiPrintAttribute(void* attr) const;
+
+	//! \copydoc ImGuiPrintable::deleteAttribute()
+	virtual void deleteAttribute(void* attr) const;
 #endif
 
 };

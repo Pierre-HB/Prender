@@ -7,11 +7,20 @@ VAO::VAO() : vao(), vbo() {
 	vbo = new VBO();
 	eob = new EOB();
 	glGenVertexArrays(1, &vao);
+#ifdef DEBUG
+	debug::NB_INSTANCES++;
+	debug::NB_OPENGL_PTR++;
+#endif
 }
 
 VAO::~VAO() {
-	delete vbo, eob;
+	delete vbo;
+	delete eob;
 	glDeleteVertexArrays(1, &vao);
+#ifdef DEBUG
+	debug::NB_INSTANCES--;
+	debug::NB_OPENGL_PTR--;
+#endif
 }
 
 void VAO::setPoints(const std::vector<float>& points) const{

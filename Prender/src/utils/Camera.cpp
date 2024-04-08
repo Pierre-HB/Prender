@@ -1,3 +1,4 @@
+#include <vector>
 #include "Camera.h"
 
 mat4 Camera::getViewMatrix() {
@@ -42,7 +43,7 @@ mat4 perspectiveProjection(float fov, float aspect_ratio, float z_near, float z_
     * 
     */
 
-    float inv_tan = 1 / tan(fov / 2);
+    float inv_tan = 1 / tanf(fov / 2);
     return mat4(inv_tan, 0, 0, 0,
         0, aspect_ratio * inv_tan, 0, 0,
         0, 0, -(z_far + z_near) / (z_far - z_near), -2 * z_far * z_near / (z_far - z_near),
@@ -68,5 +69,9 @@ void Camera::setAttribute(void* attr) {
 
 void Camera::imGuiPrintAttribute(void* attr) const {
     static_cast<imGuiCameraAttr*>(attr)->camera.imGuiPrintAttribute();
+}
+
+void Camera::deleteAttribute(void* attr) const {
+    delete static_cast<imGuiCameraAttr*>(attr);
 }
 #endif

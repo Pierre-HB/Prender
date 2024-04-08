@@ -9,7 +9,17 @@ struct imGuiCameraAttr {
 	ImGuiTransformationAttr camera;
 
 	//! constructor
-	imGuiCameraAttr(const mat4& camera) : camera(ImGuiTransformationAttr(camera, "camera")) {}
+	imGuiCameraAttr(const mat4& camera) : camera(ImGuiTransformationAttr(camera, "camera")) {
+#ifdef DEBUG
+		debug::NB_ATTR++;
+#endif
+	}
+
+	~imGuiCameraAttr() {
+#ifdef DEBUG
+		debug::NB_ATTR--;
+#endif
+	}
 };
 
 //! a virtual class for cameras
@@ -27,9 +37,17 @@ protected:
 
 public:
 	//! constructor from a camera transform and a projection transform
-	Camera(mat4 camera, mat4 projection) : camera(camera), projection(projection){}
+	Camera(mat4 camera, mat4 projection) : camera(camera), projection(projection){
+#ifdef DEBUG
+		debug::NB_INSTANCES++;
+#endif
+	}
 
-	~Camera() {}
+	~Camera() {
+#ifdef DEBUG
+		debug::NB_INSTANCES--;
+#endif
+	}
 
 	//! return the view matrix (view = inverse(camera))
 	mat4 getViewMatrix();
@@ -49,6 +67,9 @@ public:
 
 	//! \copydoc ImGuiPrintable::imGuiPrintAttribute()
 	virtual void imGuiPrintAttribute(void* attr) const;
+
+	//! \copydoc ImGuiPrintable::deleteAttribute()
+	virtual void deleteAttribute(void* attr) const;
 #endif
 };
 

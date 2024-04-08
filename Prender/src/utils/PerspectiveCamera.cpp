@@ -5,12 +5,17 @@ PerspectiveCamera::PerspectiveCamera(float aspect_ratio, float fov, float z_near
 #ifdef IMGUI
 	ImGuiManager::addObject(ImGuiObjectType::UTILS_PERSPECTIVE_CAMERA, this);
 #endif
-
+#ifdef DEBUG
+	debug::NB_INSTANCES++;
+#endif
 }
 
 PerspectiveCamera::~PerspectiveCamera() {
 #ifdef IMGUI
 	ImGuiManager::removeObject(ImGuiObjectType::UTILS_PERSPECTIVE_CAMERA, this);
+#endif
+#ifdef DEBUG
+	debug::NB_INSTANCES--;
 #endif
 }
 
@@ -49,11 +54,14 @@ void PerspectiveCamera::imGuiPrintAttribute(void* attr) const {
 	Camera::imGuiPrintAttribute(static_cast<imGuiPerspectiveCameraAttr*>(attr)->parentAttr);
 
 	ImGui::SliderFloat("aspect ratio", &static_cast<imGuiPerspectiveCameraAttr*>(attr)->aspect_ratio, 1 / 3.0f, 3, NULL, ImGuiSliderFlags_Logarithmic);
-	ImGui::SliderFloat("fov", &static_cast<imGuiPerspectiveCameraAttr*>(attr)->fov, 1e-3, M_PI - 1e-3);
+	ImGui::SliderFloat("fov", &static_cast<imGuiPerspectiveCameraAttr*>(attr)->fov, 1e-3f, M_PI - 1e-3f);
 
-	ImGui::DragFloat("z near", &static_cast<imGuiPerspectiveCameraAttr*>(attr)->z_near, 1, 1e-3, static_cast<imGuiPerspectiveCameraAttr*>(attr)->z_far, NULL, ImGuiSliderFlags_Logarithmic);
-	ImGui::DragFloat("z far", &static_cast<imGuiPerspectiveCameraAttr*>(attr)->z_far, 1, static_cast<imGuiPerspectiveCameraAttr*>(attr)->z_near, 1e5, NULL, ImGuiSliderFlags_Logarithmic);
+	ImGui::DragFloat("z near", &static_cast<imGuiPerspectiveCameraAttr*>(attr)->z_near, 1, 1e-3f, static_cast<imGuiPerspectiveCameraAttr*>(attr)->z_far, NULL, ImGuiSliderFlags_Logarithmic);
+	ImGui::DragFloat("z far", &static_cast<imGuiPerspectiveCameraAttr*>(attr)->z_far, 1, static_cast<imGuiPerspectiveCameraAttr*>(attr)->z_near, 1e5f, NULL, ImGuiSliderFlags_Logarithmic);
+}
 
-
+void PerspectiveCamera::deleteAttribute(void* attr) const {
+	Camera::deleteAttribute(static_cast<imGuiPerspectiveCameraAttr*>(attr)->parentAttr);
+	delete static_cast<imGuiPerspectiveCameraAttr*>(attr);
 }
 #endif

@@ -5,7 +5,7 @@
 
 
 BasicScene::BasicScene() {
-    lightManager = new LightManager(vec4(0.1, 0.2, 0.1, 1));
+    lightManager = new LightManager(vec4(0.1f, 0.2f, 0.1f, 1.0f));
     debug = new Texture("debug.jpeg", 0);
     texture = new Texture("container.jpg", 0);
     texture_smiley = new Texture("awesomeface.png", 1);
@@ -18,15 +18,27 @@ BasicScene::BasicScene() {
     object = new Object3D_P_N_UV("models/teapot.obj", texture);
 
 
-    lightManager->addLight(new Light_Constant_Point(vec3(0.8, 1, 0.5), vec3(0, 10, -15)));
-    lightManager->addLight(new Light_Constant_Point(vec3(0.1, 0.5, 1), vec3(0, -10, -15)));
-    lightManager->addLight(new Light_Constant_Point(vec3(1, 0.5, 0.1), vec3(-15, -10, -15)));
+    lightManager->addLight(new Light_Constant_Point(vec3(0.8f, 1.0f, 0.5f), vec3(0.0f, 10, -15)));
+    lightManager->addLight(new Light_Constant_Point(vec3(0.1f, 0.5f, 1.0f), vec3(0, -10, -15)));
+    lightManager->addLight(new Light_Constant_Point(vec3(1.0f, 0.5f, 0.1f), vec3(-15, -10, -15)));
 
-
+#ifdef DEBUG
+    debug::NB_MAIN_INSTANCES++;
+#endif
 }
 
 BasicScene::~BasicScene() {
-    //delete all pointers!!!
+    delete texture;
+    delete texture_smiley;
+    delete debug;
+    delete shader_test;
+    delete camera;
+    delete object;
+    delete lightManager;
+
+#ifdef DEBUG
+    debug::NB_MAIN_INSTANCES--;
+#endif
 }
 
 void BasicScene::render() {

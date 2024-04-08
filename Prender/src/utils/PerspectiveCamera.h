@@ -12,7 +12,18 @@ struct imGuiPerspectiveCameraAttr {
 	void* parentAttr;
 
 	//! Constructor
-	imGuiPerspectiveCameraAttr(float aspect_ratio, float fov, float z_near, float z_far, void* parentAttr) :aspect_ratio(aspect_ratio), fov(fov), z_near(z_near), z_far(z_far), parentAttr(parentAttr) {}
+	imGuiPerspectiveCameraAttr(float aspect_ratio, float fov, float z_near, float z_far, void* parentAttr) :aspect_ratio(aspect_ratio), fov(fov), z_near(z_near), z_far(z_far), parentAttr(parentAttr) {
+#ifdef DEBUG
+		debug::NB_ATTR++;
+#endif
+	}
+
+	~imGuiPerspectiveCameraAttr() {
+		//delete parentAttr;
+#ifdef DEBUG
+		debug::NB_ATTR--;
+#endif
+	}
 };
 
 //! a perspective camera
@@ -54,5 +65,8 @@ public:
 
 	//! \copydoc ImGuiPrintable::imGuiPrintAttribute()
 	virtual void imGuiPrintAttribute(void* attr) const;
+
+	//! \copydoc ImGuiPrintable::deleteAttribute()
+	virtual void deleteAttribute(void* attr) const;
 #endif
 };

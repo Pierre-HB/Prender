@@ -12,7 +12,16 @@ struct imGuiTextureAttr {
 	int texture_unit;
 
 	//! Constructor
-	imGuiTextureAttr(const GLuint textureID, int texture_unit) : textureID(textureID) , texture_unit(texture_unit) {}
+	imGuiTextureAttr(const GLuint textureID, int texture_unit) : textureID(textureID) , texture_unit(texture_unit) {
+#ifdef DEBUG
+		debug::NB_ATTR++;
+#endif
+	}
+	~imGuiTextureAttr() {
+#ifdef DEBUG
+		debug::NB_ATTR--;
+#endif
+	}
 };
 
 //! A class for loading Textures in the shaders
@@ -60,5 +69,8 @@ public:
 
 	//! \copydoc ImGuiPrintable::imGuiPrintAttribute()
 	virtual void imGuiPrintAttribute(void* attr) const;
+
+	//! \copydoc ImGuiPrintable::deleteAttribute()
+	virtual void deleteAttribute(void* attr) const;
 #endif
 };

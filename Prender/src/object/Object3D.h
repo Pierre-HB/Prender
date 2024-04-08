@@ -10,7 +10,18 @@ struct imGuiObject3DAttr {
 	ImGuiTransformationAttr world;
 	
 	//! Constructor
-	imGuiObject3DAttr(const mat4& object, const mat4& world) : object(ImGuiTransformationAttr(object, "object")), world(ImGuiTransformationAttr(world, "world")) {}
+	imGuiObject3DAttr(const mat4& object, const mat4& world) : object(ImGuiTransformationAttr(object, "object")), world(ImGuiTransformationAttr(world, "world")) {
+#ifdef DEBUG
+		debug::NB_ATTR++;
+#endif
+	}
+
+	~imGuiObject3DAttr() {
+#ifdef DEBUG
+		debug::NB_ATTR--;
+#endif
+	}
+	
 };
 
 //! Virtual class for 3D obejct
@@ -31,15 +42,24 @@ public:
 	//! constructor for an object3D
 	Object3D() : object(mat4::identity()), world(mat4::identity()) {
 		vao = new VAO();
+#ifdef DEBUG
+		debug::NB_INSTANCES++;
+#endif
 	}
 
 	//! constructor for an object3D
 	Object3D(const mat4& object, const mat4& world) : object(object), world(world) {
 		vao = new VAO();
+#ifdef DEBUG
+		debug::NB_INSTANCES++;
+#endif
 	}
 
 	virtual ~Object3D() {
-
+		delete vao;
+#ifdef DEBUG
+		debug::NB_INSTANCES--;
+#endif
 	}
 
 	//! moove a 3D object on the world
@@ -60,5 +80,8 @@ public:
 
 	//! \copydoc ImGuiPrintable::imGuiPrintAttribute()
 	virtual void imGuiPrintAttribute(void* attr) const;
+
+	//! \copydoc ImGuiPrintable::deleteAttribute()
+	virtual void deleteAttribute(void* attr) const;
 #endif
 };

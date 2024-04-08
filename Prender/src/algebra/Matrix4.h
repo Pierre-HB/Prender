@@ -145,6 +145,8 @@ struct ImGuiTransformationAttr
 	ImGuiTransformationAttr(const mat4& transformation);
 	ImGuiTransformationAttr(const mat4& transformation, const char* name);
 
+	~ImGuiTransformationAttr();
+
 	//reset the attributes depending on the new transformation (without changing the rotations vector)
 	void extract_transormations(const mat4& transformation);
 

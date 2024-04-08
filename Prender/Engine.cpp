@@ -101,6 +101,9 @@ Engine::Engine() : activeScene(0), start(), nextRender(), nextUpdate() {
     window = initWindows(800, 600);
     if (window == nullptr)
         exit(-1);
+#ifdef DEBUG
+    debug::NB_OPENGL_PTR++;
+#endif
 #ifdef IMGUI
     ImGuiManager::initializeContext(window);
     imGuiManager = new ImGuiManager();
@@ -113,15 +116,23 @@ Engine::Engine() : activeScene(0), start(), nextRender(), nextUpdate() {
     maxMissedTicks = static_cast<int>(2*tps);
 
     glfwSwapInterval(0);//no vsync (not working)
+#ifdef DEBUG
+    debug::NB_MAIN_INSTANCES++;
+#endif
 }
 
 Engine::~Engine() {
+    for (size_t i = 0; i < scenes.size(); i++)
+        delete scenes[i];
 #ifdef IMGUI
     ImGuiManager::destroyContext();
     delete imGuiManager;
 #endif
 
     glfwDestroyWindow(window);
+#ifdef DEBUG
+    debug::NB_OPENGL_PTR--;
+#endif
 
     delete(bufferKeyState);
     delete(currentKeyState);
@@ -129,6 +140,9 @@ Engine::~Engine() {
     delete(toggleKeyState);
 
     glfwTerminate();
+#ifdef DEBUG
+    debug::NB_MAIN_INSTANCES--;
+#endif
 }
 
 void Engine::update() {

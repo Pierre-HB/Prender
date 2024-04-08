@@ -29,4 +29,8 @@ void Object3D::imGuiPrintAttribute(void* attr) const {
 	static_cast<imGuiObject3DAttr*>(attr)->object.imGuiPrintAttribute();
 	static_cast<imGuiObject3DAttr*>(attr)->world.imGuiPrintAttribute();
 }
+
+void Object3D::deleteAttribute(void* attr) const {
+	delete static_cast<imGuiObject3DAttr*>(attr);
+}
 #endif

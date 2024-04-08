@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "Matrix4.h"
 
 
@@ -82,9 +84,9 @@ mat4 mat4::extractRotation() const {
 }
 
 vec3 mat4::extractScale() const {
-    float sx = sqrt(c[0] * c[0] + c[4] * c[4] + c[8] * c[8]);
-    float sy = sqrt(c[1] * c[1] + c[5] * c[5] + c[9] * c[9]);
-    float sz = sqrt(c[2] * c[2] + c[6] * c[6] + c[10] * c[10]);
+    float sx = sqrtf(c[0] * c[0] + c[4] * c[4] + c[8] * c[8]);
+    float sy = sqrtf(c[1] * c[1] + c[5] * c[5] + c[9] * c[9]);
+    float sz = sqrtf(c[2] * c[2] + c[6] * c[6] + c[10] * c[10]);
     return vec3(sx, sy, sz);
 }
 
@@ -285,21 +287,21 @@ mat4 inverse(const mat4& m) {
 
 mat4 rotationMatrixX(float a) {
     return mat4(1, 0, 0, 0,
-                0, cos(a), -sin(a), 0,
-                0, sin(a), cos(a), 0,
+                0, cosf(a), -sinf(a), 0,
+                0, sinf(a), cosf(a), 0,
                 0, 0, 0, 1);
 }
 
 mat4 rotationMatrixY(float a) {
-    return mat4(cos(a),     0,   sin(a),     0,
+    return mat4(cosf(a),     0,   sinf(a),     0,
                 0,          1,  0,          0,
-                -sin(a),    0,  cos(a),     0,
+                -sinf(a),    0,  cosf(a),     0,
                 0,          0,  0,          1);
 }
 
 mat4 rotationMatrixZ(float a) {
-    return mat4(cos(a), -sin(a), 0, 0,
-                sin(a), cos(a), 0, 0,
+    return mat4(cosf(a), -sinf(a), 0, 0,
+                sinf(a), cosf(a), 0, 0,
                 0, 0, 1, 0,
                 0, 0, 0, 1);
 }
@@ -338,11 +340,23 @@ mat4 transformationMatrix(const vec3& rotations, const vec3& scales, const vec3&
 ImGuiTransformationAttr::ImGuiTransformationAttr(const mat4& transformation) : name("Transformation") {
     extract_transormations(transformation);
     rotations = vec3();
+#ifdef DEBUG
+    debug::NB_ATTR++;
+#endif
 }
 
 ImGuiTransformationAttr::ImGuiTransformationAttr(const mat4& transformation, const char* name) : name(name) {
     extract_transormations(transformation);
     rotations = vec3();
+#ifdef DEBUG
+    debug::NB_ATTR++;
+#endif
+}
+
+ImGuiTransformationAttr::~ImGuiTransformationAttr() {
+#ifdef DEBUG
+    debug::NB_ATTR--;
+#endif
 }
 
 void ImGuiTransformationAttr::extract_transormations(const mat4& transformation) {
@@ -359,13 +373,13 @@ void ImGuiTransformationAttr::imGuiPrintAttribute() {
         ImGui::DragFloat3(": translation", &(translation.x));
         ImGui::PopItemWidth();
 
-        float scale = length(scales)/(sqrt(3));
+        float scale = length(scales)/(sqrtf(3));
         float old_scale = scale;
         ImGui::PushItemWidth(75 * 3);
 
-        ImGui::DragFloat3(": scales", &(scales.x), 1, 1e-3, 1000, NULL, ImGuiSliderFlags_Logarithmic);
+        ImGui::DragFloat3(": scales", &(scales.x), 1, 1e-3f, 1000, NULL, ImGuiSliderFlags_Logarithmic);
         ImGui::PushItemWidth(75);
-        ImGui::DragFloat(": scale", &scale, 1, 1e-3, 1000, NULL, ImGuiSliderFlags_Logarithmic);
+        ImGui::DragFloat(": scale", &scale, 1, 1e-3f, 1000, NULL, ImGuiSliderFlags_Logarithmic);
         ImGui::PopItemWidth();
         if (old_scale != scale) {
             scales *= scale / old_scale;

@@ -61,12 +61,18 @@ Texture::Texture(const char* file, int texture_unit) : textureID(), texture_unit
 #ifdef IMGUI
 	ImGuiManager::addObject(ImGuiObjectType::UTILS_TEXTURE, this);
 #endif
+#ifdef DEBUG
+	debug::NB_INSTANCES++;
+#endif
 }
 
 Texture::~Texture() {
 	glDeleteTextures(1, &textureID);
 #ifdef IMGUI
 	ImGuiManager::removeObject(ImGuiObjectType::UTILS_TEXTURE, this);
+#endif
+#ifdef DEBUG
+	debug::NB_INSTANCES--;
 #endif
 }
 
@@ -95,5 +101,9 @@ void Texture::imGuiPrintAttribute(void* attr) const {
 	ImGui::InputInt("Texture unit", &static_cast<imGuiTextureAttr*>(attr)->texture_unit);
 
 	ImGui::Image((void*)(intptr_t)static_cast<imGuiTextureAttr*>(attr)->textureID, ImVec2(64, 64));
+}
+
+void Texture::deleteAttribute(void* attr) const {
+	delete static_cast<imGuiTextureAttr*>(attr);
 }
 #endif

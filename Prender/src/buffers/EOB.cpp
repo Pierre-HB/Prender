@@ -1,11 +1,21 @@
 #include "EOB.h"
+#include "../../main.h"
 
 EOB::EOB() : eob() {
 	glGenBuffers(1, &eob);
+#ifdef DEBUG
+	debug::NB_INSTANCES++;
+	debug::NB_OPENGL_PTR++;
+#endif
 }
 
 EOB::~EOB() {
+
 	glDeleteBuffers(1, &eob);
+#ifdef DEBUG
+	debug::NB_INSTANCES--;
+	debug::NB_OPENGL_PTR--;
+#endif
 }
 
 void EOB::setData(GLsizeiptr size, const void* indices, GLenum usage) {

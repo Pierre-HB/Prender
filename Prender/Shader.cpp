@@ -15,6 +15,11 @@ usedShader get_used_shader(ShaderType shader) {
 		return usedShader(false, false, false, false);
 	case DEFAULT_P_N_UV:
 		return usedShader(true, false, true, false);
+	default:
+#ifdef CONSOLE
+		std::cout << "[WARNING] used shader for shader type " << shader << " is undefind" << std::endl;
+#endif
+		return usedShader(true, true, true, true);
 	}
 }
 
@@ -25,6 +30,11 @@ const char* get_vertex_shader(ShaderType shader) {
 		return "";
 	case DEFAULT_P_N_UV:
 		return "src/shaders/vertexUVShader.glsl";
+	default:
+#ifdef CONSOLE
+		std::cout << "[WARNING] vertex shader for shader type " << shader << " is undefind" << std::endl;
+#endif
+		return "";
 	}
 }
 
@@ -35,6 +45,11 @@ const char* get_geometry_shader(ShaderType shader) {
 		return "";
 	case DEFAULT_P_N_UV:
 		return "";
+	default:
+#ifdef CONSOLE
+			std::cout << "[WARNING] geometry shader for shader type " << shader << " is undefind" << std::endl;
+#endif
+			return "";
 	}
 }
 
@@ -45,6 +60,11 @@ const char* get_fragment_shader(ShaderType shader) {
 		return "";
 	case DEFAULT_P_N_UV:
 		return "src/shaders/fragmentUVShader.glsl";
+	default:
+#ifdef CONSOLE
+		std::cout << "[WARNING] fragment shader for shader type " << shader << " is undefind" << std::endl;
+#endif
+		return "";
 	}
 }
 
@@ -54,6 +74,11 @@ const char* get_compute_shader(ShaderType shader) {
 	case NO_SHADER:
 		return "";
 	case DEFAULT_P_N_UV:
+		return "";
+	default:
+#ifdef CONSOLE
+		std::cout << "[WARNING] compute shader for shader type " << shader << " is undefind" << std::endl;
+#endif
 		return "";
 	}
 }
@@ -84,13 +109,16 @@ GLuint Shader::compileShader(const char* file, GLenum shader) {
 	const GLchar* shaderCode = shaderString.c_str();
 
 	shaderID = glCreateShader(shader);
+#ifdef DEBUG
+	debug::NB_OPENGL_PTR++;
+#endif
 	glShaderSource(shaderID, 1, &shaderCode, NULL);
 	glCompileShader(shaderID);
 
 	int success;
-	char infoLog[512];
 	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
 #ifdef CONSOLE
+	char infoLog[512];
 	if (!success) {
 		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
 		std::cout << "[ERROR] at compilation of shader : " << file << std::endl << infoLog << std::endl;
@@ -130,27 +158,53 @@ Shader::Shader(ShaderType shaderType) : shaderType(shaderType)
 		
 	glLinkProgram(program);
 	int success;
-	char infoLog[512];
 	glGetShaderiv(program, GL_LINK_STATUS, &success);
 #ifdef CONSOLE
+	char infoLog[512];
 	if (!success) {
 		glGetShaderInfoLog(program, 512, NULL, infoLog);
 		std::cout << "[ERROR] Linking of shader" << std::endl << infoLog << std::endl;
 	}
 #endif
 
-	if(used_shader.vertexShader)
+	if (used_shader.vertexShader) {
+#ifdef DEBUG
+		debug::NB_OPENGL_PTR--;
+#endif
 		glDeleteShader(vertexShaderID);
-	if(used_shader.geometryShader)
+	}
+		
+	if (used_shader.geometryShader) {
+#ifdef DEBUG
+		debug::NB_OPENGL_PTR--;
+#endif
 		glDeleteShader(geometryShaderID);
-	if(used_shader.fragmentShader)
-		glDeleteShader(fragmentShaderID);
-	if(used_shader.computeShader)
-		glDeleteShader(computeShaderID);
+	}
+		if (used_shader.fragmentShader) {
+#ifdef DEBUG
+			debug::NB_OPENGL_PTR--;
+#endif
+			glDeleteShader(fragmentShaderID);
+	}
+		if (used_shader.computeShader) {
+#ifdef DEBUG
+			debug::NB_OPENGL_PTR--;
+#endif
+			glDeleteShader(computeShaderID);
+	}
+		
+#ifdef DEBUG
+	debug::NB_INSTANCES++;
+	debug::NB_OPENGL_PTR++;
+#endif
 }
 
 Shader::~Shader() {
 	glDeleteProgram(program);
+#ifdef DEBUG
+	debug::NB_INSTANCES--;
+	debug::NB_OPENGL_PTR--;
+#endif
 }
 
 void Shader::use() const {

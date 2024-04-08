@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "../../main.h"
 
 
@@ -303,7 +304,7 @@ T length2(const vector3<T>& a) {
 //! length of a vector3
 template<typename T>
 T length(const vector3<T>& a) {
-	return sqrt(dot(a, a));
+	return sqrtf(dot(a, a));
 }
 
 //! length of a vector4

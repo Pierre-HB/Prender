@@ -5,11 +5,17 @@ Light_Constant_Point::Light_Constant_Point(const vec3& lightColor, const vec3& p
 #ifdef IMGUI
 	ImGuiManager::addObject(ImGuiObjectType::LIGHT_CONSTANT_POINT, this);
 #endif
+#ifdef DEBUG
+	debug::NB_INSTANCES++;
+#endif
 }
 
 Light_Constant_Point::~Light_Constant_Point() {
 #ifdef IMGUI
 	ImGuiManager::removeObject(ImGuiObjectType::LIGHT_CONSTANT_POINT, this);
+#endif
+#ifdef DEBUG
+	debug::NB_INSTANCES--;
 #endif
 }
 
@@ -34,6 +40,10 @@ void Light_Constant_Point::imGuiPrintAttribute(void* attr) const {
 	
 	ImGui::DragFloat3("Light position", &static_cast<imGuiLightConstantPointAttr*>(attr)->position.x);
 
-	ImGui::DragFloat("Intensity", &static_cast<imGuiLightConstantPointAttr*>(attr)->intensity, 1, 1e-3, 1000, NULL, ImGuiSliderFlags_Logarithmic);
+	ImGui::DragFloat("Intensity", &static_cast<imGuiLightConstantPointAttr*>(attr)->intensity, 1, 1e-3f, 1000, NULL, ImGuiSliderFlags_Logarithmic);
+}
+
+void Light_Constant_Point::deleteAttribute(void* attr) const {
+	delete static_cast<imGuiLightConstantPointAttr*>(attr);
 }
 #endif
