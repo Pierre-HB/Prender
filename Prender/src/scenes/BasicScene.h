@@ -1,9 +1,10 @@
 #pragma once
 
+#include <vector>
 #include "scene.h"
+
 #include "../utils/texture.h"
 #include "../../Shader.h"
-#include <vector>
 #include "../buffers/VAO.h"
 #include "../utils/PerspectiveCamera.h"
 #include "../object/Object3D_P_N_UV.h"

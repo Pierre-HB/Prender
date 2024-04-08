@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../main.h"
 #include "../algebra/Algebra.h"
+#include "../../main.h"
 
 #ifdef IMGUI
 //! Data for the Camera UI

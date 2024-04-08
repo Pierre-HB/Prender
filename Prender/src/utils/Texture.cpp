@@ -1,8 +1,8 @@
 #include "texture.h"
-
 //image loader
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "../../main.h"
 
 
 Texture::Texture(const char* file, int texture_unit) : textureID(), texture_unit(texture_unit) {

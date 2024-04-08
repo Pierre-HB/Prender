@@ -1,5 +1,6 @@
 #include <vector>
 #include "Camera.h"
+#include "../../main.h"
 
 mat4 Camera::getViewMatrix() {
 	return inverse(camera);

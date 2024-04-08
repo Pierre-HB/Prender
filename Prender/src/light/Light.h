@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../main.h"
-#include "../algebra/Algebra.h"
 #include <glad/glad.h>
 #include <vector>
+
+#include "../algebra/Algebra.h"
 #include "../../Shader.h"
 
 //! Light representation in the GPU memory
@@ -73,6 +73,7 @@ private:
 	std::vector<Light*> lights; //! list of all lights in the scene
 	std::vector<lightCaster> lightCasters;//! lights data to sent to the gpu
 	vec4 ambiantColor;//! ambiant color
+
 public:
 	//! constructor with an ambiant lighht
 	LightManager(const vec4& ambiantColor=vec4());

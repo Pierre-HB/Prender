@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "../../main.h"
 
 Scene::Scene() {
 #ifdef DEBUG

@@ -1,8 +1,9 @@
 #include "Object3D_P_N_UV.h"
-
 #include <fstream>
 #include <sstream>
 #include <map>
+#include "../../main.h"
+
 
 Object3D_P_N_UV::Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> normals, std::vector<vec2> uvs, std::vector<int> indices, Texture* texture) : texture(texture), nb_vertex(), lightCasterID() {
 	vao->setPoints(points, uvs, indices);

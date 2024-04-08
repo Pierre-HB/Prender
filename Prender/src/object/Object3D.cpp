@@ -1,4 +1,5 @@
 #include "Object3D.h"
+#include "../../main.h"
 
 void Object3D::moove(const mat4& transformation) {
 	world = transformation * world;

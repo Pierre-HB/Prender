@@ -1,5 +1,5 @@
 #include "PerspectiveCamera.h"
-
+#include "../../main.h"
 
 PerspectiveCamera::PerspectiveCamera(float aspect_ratio, float fov, float z_near, float z_far, const mat4& camera) : aspect_ratio(aspect_ratio), fov(fov), z_near(z_near), z_far(z_far), Camera(camera, perspectiveProjection(fov, aspect_ratio, z_near, z_far)) {
 #ifdef IMGUI

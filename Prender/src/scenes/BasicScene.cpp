@@ -2,6 +2,8 @@
 #include "../algebra/Matrix4.h"
 #include "../light/Light.h"
 #include "../light/Light_Constant_Point.h"
+#include "../../main.h"
+
 
 
 BasicScene::BasicScene() {

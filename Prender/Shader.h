@@ -1,6 +1,5 @@
 #pragma once
 
-#include "main.h"
 #include <glad/glad.h>
 #include <string>
 #include "src/algebra/Algebra.h"

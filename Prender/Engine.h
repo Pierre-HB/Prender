@@ -1,9 +1,11 @@
 #pragma once
 
-#include "main.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <vector>
+
+#include "main.h"
+
 
 //! the clock of the system, will skedule renders and updates
 class Engine;

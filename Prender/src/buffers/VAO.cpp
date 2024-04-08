@@ -1,6 +1,8 @@
 #include "VAO.h"
 #include <cassert>
 
+#include "../../main.h"
+
 
 VAO::VAO() : vao(), vbo() {
 	

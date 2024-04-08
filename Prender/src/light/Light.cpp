@@ -1,4 +1,6 @@
 #include "Light.h"
+#include "../../main.h"
+
 
 Light::Light(const vec3& lightColor, float falloff, const vec3& position, float cos_angle_min, const vec3& direction, float cos_angle_max) : lightColor(lightColor), falloff(falloff), position(position), cos_angle_min(cos_angle_min), direction(direction), cos_angle_max(cos_angle_max) {
 #ifdef DEBUG

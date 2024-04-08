@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Camera.h"
+#include "../../main.h"
 
 #ifdef IMGUI
 //! data for a Perpective Camera UI

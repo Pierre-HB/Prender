@@ -1,9 +1,8 @@
 #include "Shader.h"
-
-
-
 #include <fstream>
 #include <sstream>
+#include "main.h"
+
 
 //! initialise the used shader
 ShaderType Shader::loadedShader = ShaderType::NO_SHADER;

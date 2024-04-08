@@ -7,7 +7,6 @@
 #include "VBO.h"
 #include "EOB.h"
 #include "../algebra/Algebra.h"
-#include "../../main.h"
 
 //! a mesh vertex made from one point, one normal and on iv coordinate to setup the vbo
 struct vertex_P_N_UV

@@ -1,8 +1,6 @@
 #pragma once
 
 #include "main.h"
-#include <vector>
-#include <string>
 
 
 #ifdef IMGUI
@@ -13,6 +11,8 @@ class ImGuiPrintable;
 //! the UI manager
 class ImGuiManager;
 
+#include <vector>
+#include <string>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
