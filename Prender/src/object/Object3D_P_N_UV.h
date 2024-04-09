@@ -10,11 +10,12 @@
 struct imGuiObject3D_P_N_UVAttr {
 	GLuint textureID;
 	int nb_vertex;
+	int specularDensity;
 	std::vector<int> lightCasterID;
 	void* parentAttr;
 
 	//! constructor
-	imGuiObject3D_P_N_UVAttr(GLuint textureID, int nb_vertex, const std::vector<int>& lightCasterID, void* parentAttr) : textureID(textureID), nb_vertex(nb_vertex), lightCasterID(lightCasterID), parentAttr(parentAttr) {
+	imGuiObject3D_P_N_UVAttr(GLuint textureID, int nb_vertex, int specularDensity, const std::vector<int>& lightCasterID, void* parentAttr) : textureID(textureID), nb_vertex(nb_vertex), specularDensity(specularDensity), lightCasterID(lightCasterID), parentAttr(parentAttr) {
 #ifdef DEBUG
 		debug::NB_ATTR++;
 #endif
@@ -37,6 +38,7 @@ class Object3D_P_N_UV : public Object3D
 private:
 
 	Texture* texture;
+	int specularDensity;
 	//Texture* normal_map;
 	//Texture* material;
 	int nb_vertex; //! Do I realy need that ???

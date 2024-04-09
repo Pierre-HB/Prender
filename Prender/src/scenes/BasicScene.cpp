@@ -12,6 +12,9 @@ BasicScene::BasicScene() {
     texture = new Texture("container.jpg", 0);
     texture_smiley = new Texture("awesomeface.png", 1);
 
+    debugMaterial = Texture::createDebugMaterial(512, 512, 2);
+    //debugMaterial = Texture::createDebugMaterial(16, 16, 2);
+
     shader_test = new Shader(DEFAULT_P_N_UV);
     lightManager->bindShader(shader_test);
     
@@ -38,6 +41,8 @@ BasicScene::~BasicScene() {
     delete object;
     delete lightManager;
 
+    delete debugMaterial;
+
 #ifdef DEBUG
     debug::NB_MAIN_INSTANCES--;
 #endif
@@ -63,7 +68,8 @@ void BasicScene::render() {
     object->setup(shader_test, camera->getProjectionMatrix(), camera->getViewMatrix());
 
     texture_smiley->bind();
-    shader_test->setUniform("smiley", 1);
+    debugMaterial->bind();
+    shader_test->setUniform("material", 2); // TODO Create a Material class that will handle the albedo/normal map/material texture
 
     object->draw();
 
@@ -73,7 +79,7 @@ void BasicScene::update(Engine* engine) {
     float a = static_cast<float>(2 * 3.1415 / (10 * engine->get_tps())); // 1/10 tour/s
     float s = static_cast<float>(2 / (engine->get_tps())); // 1m/s
 
-    object->moove(rotationMatrixY(a));
+    //object->moove(rotationMatrixY(a));
     if (engine->currentKeyState->forward) 
         camera->moveView(translationMatrix(vec3(0, 0, -s)));
     if (engine->currentKeyState->backward)
@@ -83,12 +89,12 @@ void BasicScene::update(Engine* engine) {
     if (engine->currentKeyState->right)
         camera->moveView(translationMatrix(vec3(s, 0, 0)));
 
-    if (engine->toggleKeyState->forward) {
+    /*if (engine->toggleKeyState->forward) {
         std::vector<Light*> lights = lightManager->getLights();
         lightManager->removeLight(lights[0]);
 
         lights = lightManager->getLights();
-    }
+    }*/
 
     object->setLightCasterID(lightManager->getLightCasters());
         

@@ -36,9 +36,15 @@ private:
 	GLuint textureID; //id of the texture
 	int texture_unit;//!texture unit of the texture
 
+	//! write the texture data in the gpu, return if the operation was succesfull
+	bool setData(unsigned char* data, int width, int height, int nbChanels);
+
 public:
 	//! constructor of the texture from a file
-	Texture(const char* file, int texture_unit=0);
+	Texture(const char* file, int texture_unit = 0);
+
+	//! constructor from a 8bit per channel image
+	Texture(unsigned char* data, int width, int height, int nbChannels, int texture_unit=0);
 
 	~Texture();
 
@@ -56,6 +62,9 @@ public:
 
 	//! Set the textureID. BECAREFULL, THE TEXTURE ID IS NOT SUPPOSED TO CHANGE
 	void setID(GLuint _textureID) {textureID = _textureID; }
+
+	//! create a 16*16 image tilling woth all shade of grey
+	static Texture* createDebugMaterial(int width, int height, int texture_unit);
 
 #ifdef IMGUI
 	//! \copydoc ImGuiPrintable::getAttribute()

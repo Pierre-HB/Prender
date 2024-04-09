@@ -16,6 +16,7 @@ private:
 	Texture* texture;
 	Texture* texture_smiley;
 	Texture* debug;
+	Texture* debugMaterial;
 	Shader* shader_test;
 	PerspectiveCamera* camera;
 	Object3D_P_N_UV* object;

@@ -5,7 +5,7 @@
 #include "../../main.h"
 
 
-Object3D_P_N_UV::Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> normals, std::vector<vec2> uvs, std::vector<int> indices, Texture* texture) : texture(texture), nb_vertex(), lightCasterID() {
+Object3D_P_N_UV::Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> normals, std::vector<vec2> uvs, std::vector<int> indices, Texture* texture) : texture(texture), specularDensity(6), nb_vertex(), lightCasterID() {
 	vao->setPoints(points, uvs, indices);
 #ifdef IMGUI
 	ImGuiManager::addObject(ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV, this);
@@ -15,7 +15,7 @@ Object3D_P_N_UV::Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> nor
 #endif
 }
 
-Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(texture), nb_vertex(), lightCasterID() {
+Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(texture), specularDensity(6), nb_vertex(), lightCasterID() {
 	std::ifstream inputStream;
 	std::stringstream stream;
 	inputStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -127,6 +127,7 @@ void Object3D_P_N_UV::setup(Shader* shader, const mat4& p, const mat4& v) {
 		shader->setUniform("mvp", p * v * world * object);
 		shader->setUniform("mv", v * world * object);
 		shader->setUniform("mv_n", normalTransformation(v * world * object));
+		shader->setUniform("specularDensity", specularDensity);
 		break;
 	default:
 #ifdef CONSOLE
@@ -179,7 +180,7 @@ void* Object3D_P_N_UV::getAttribute() const {
 	std::vector<int> tmp = std::vector<int>(maxLight, -1);
 	for (int i = 0; i < maxLight; i++)
 		tmp[i] = lightCasterID[i];
-	imGuiObject3D_P_N_UVAttr* attr = new imGuiObject3D_P_N_UVAttr(texture->getID(), nb_vertex, tmp, Object3D::getAttribute());
+	imGuiObject3D_P_N_UVAttr* attr = new imGuiObject3D_P_N_UVAttr(texture->getID(), nb_vertex, specularDensity, tmp, Object3D::getAttribute());
 	return attr;
 }
 
@@ -192,6 +193,7 @@ void Object3D_P_N_UV::updateAttribute(void* attr) const {
 		
 	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->textureID = texture->getID();
 	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->nb_vertex = nb_vertex;
+	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->specularDensity = specularDensity;
 	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->lightCasterID = tmp;
 	Object3D::updateAttribute(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->parentAttr);
 
@@ -199,6 +201,7 @@ void Object3D_P_N_UV::updateAttribute(void* attr) const {
 
 void Object3D_P_N_UV::setAttribute(void* attr) {
 	texture->setID(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->textureID);
+	specularDensity = static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->specularDensity;
 	for (int i = 0; i < maxLight; i++)
 		lightCasterID[i] = static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->lightCasterID[i];
 	Object3D::setAttribute(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->parentAttr);
@@ -209,6 +212,8 @@ void Object3D_P_N_UV::imGuiPrintAttribute(void* attr) const {
 	int tmp = static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->textureID;
 	ImGui::InputInt(": TextureID", &tmp);
 	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->textureID = tmp;
+
+	ImGui::SliderInt(": specular", &static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->specularDensity, 0, 16);
 	ImGui::Text("%d : nb vertex", static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->nb_vertex);
 
 	Object3D::imGuiPrintAttribute(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->parentAttr);
