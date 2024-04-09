@@ -17,7 +17,7 @@ class ImGuiManager;
 #include <GLFW/glfw3.h>
 
 //! types of object (to put them in the right place in the instance tree)
-enum class ImGuiObjectType { LIGHT_CONSTANT_POINT, OBJECT_OBJECT3D_DEFAULT_P_N_UV, UTILS_PERSPECTIVE_CAMERA, UTILS_TEXTURE, MaxObject };
+enum class ImGuiObjectType { LIGHT_CONSTANT_POINT, OBJECT_OBJECT3D_DEFAULT_P_N_UV, UTILS_PERSPECTIVE_CAMERA, UTILS_TEXTURE, MATERIALS_MATERIAL_AR, MaxObject };
 
 
 
@@ -135,6 +135,9 @@ public:
 
 	//! remove an object frome the instance tree
 	static void removeObject(ImGuiObjectType type, ImGuiPrintable* obj);
+
+	//! return the attriute of an object
+	static void* getAttr(void* obj);
 
 	//! to call at start of update loop to insert modified attributes (by ImGUI) in the code
 	void setAttributes();

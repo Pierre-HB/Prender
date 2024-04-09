@@ -161,6 +161,8 @@
     <ClCompile Include="src\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\light\Light.cpp" />
     <ClCompile Include="src\light\Light_Constant_Point.cpp" />
+    <ClCompile Include="src\materials\Material.cpp" />
+    <ClCompile Include="src\materials\Material_Albedo_Material.cpp" />
     <ClCompile Include="src\object\Object3D.cpp" />
     <ClCompile Include="src\object\Object3D_P_N_UV.cpp" />
     <ClCompile Include="src\scenes\BasicScene.cpp" />
@@ -198,6 +200,8 @@
     <ClInclude Include="src\imgui\imstb_truetype.h" />
     <ClInclude Include="src\light\Light.h" />
     <ClInclude Include="src\light\Light_Constant_Point.h" />
+    <ClInclude Include="src\materials\Material.h" />
+    <ClInclude Include="src\materials\Material_Albedo_Material.h" />
     <ClInclude Include="src\object\Object3D.h" />
     <ClInclude Include="src\object\Object3D_P_N_UV.h" />
     <ClInclude Include="src\scenes\BasicScene.h" />

@@ -58,6 +58,12 @@
     <Filter Include="Fichiers d%27en-tête\light">
       <UniqueIdentifier>{98471520-a2bf-4ecb-8fe8-59f2c49a3111}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\material">
+      <UniqueIdentifier>{83013628-8147-47fe-ad93-f969dcee8371}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\material">
+      <UniqueIdentifier>{116ae3bd-6a04-43fb-9d9d-cbc6ba18eae2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -140,6 +146,12 @@
     </ClCompile>
     <ClCompile Include="ImGuiManager.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\materials\Material.cpp">
+      <Filter>Fichiers sources\material</Filter>
+    </ClCompile>
+    <ClCompile Include="src\materials\Material_Albedo_Material.cpp">
+      <Filter>Fichiers sources\material</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +259,12 @@
     </ClInclude>
     <ClInclude Include="ImGuiManager.h">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\materials\Material.h">
+      <Filter>Fichiers d%27en-tête\material</Filter>
+    </ClInclude>
+    <ClInclude Include="src\materials\Material_Albedo_Material.h">
+      <Filter>Fichiers d%27en-tête\material</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

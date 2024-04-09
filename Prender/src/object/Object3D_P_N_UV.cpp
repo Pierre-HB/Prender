@@ -5,7 +5,8 @@
 #include "../../main.h"
 
 
-Object3D_P_N_UV::Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> normals, std::vector<vec2> uvs, std::vector<int> indices, Texture* texture) : texture(texture), specularDensity(6), nb_vertex(), lightCasterID() {
+//DEPRECATED
+Object3D_P_N_UV::Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> normals, std::vector<vec2> uvs, std::vector<int> indices, Texture* texture) : nb_vertex(), lightCasterID() {
 	vao->setPoints(points, uvs, indices);
 #ifdef IMGUI
 	ImGuiManager::addObject(ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV, this);
@@ -15,7 +16,8 @@ Object3D_P_N_UV::Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> nor
 #endif
 }
 
-Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(texture), specularDensity(6), nb_vertex(), lightCasterID() {
+
+Object3D_P_N_UV::Object3D_P_N_UV(const char* file, const char* albedo, const char* roughness) : material(new Material_AR(albedo, roughness)), nb_vertex(), lightCasterID() {
 	std::ifstream inputStream;
 	std::stringstream stream;
 	inputStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -32,7 +34,7 @@ Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(t
 	}
 	char line[512];
 	int max_size = 512;
-	
+
 	std::vector<vec3> points = std::vector<vec3>();
 	std::vector<vec3> normals = std::vector<vec3>();
 	std::vector<vec2> uvs = std::vector<vec2>();
@@ -71,11 +73,11 @@ Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(t
 			std::tuple<int, int, int> v2(p2, n2, uv2);
 			std::tuple<int, int, int> v3(p3, n3, uv3);
 
-			if (vertexID.find(v1)==vertexID.end()) {
+			if (vertexID.find(v1) == vertexID.end()) {
 				//not in map
 				vertexID[v1] = maxID;
 				maxID++;
-				vertices.push_back(vertex_P_N_UV(points[p1-1], normals[n1-1], uvs[uv1-1]));
+				vertices.push_back(vertex_P_N_UV(points[p1 - 1], normals[n1 - 1], uvs[uv1 - 1]));
 			}
 			indices.push_back(vertexID[v1]);
 
@@ -83,7 +85,7 @@ Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(t
 				//not in map
 				vertexID[v2] = maxID;
 				maxID++;
-				vertices.push_back(vertex_P_N_UV(points[p2-1], normals[n2-1], uvs[uv2-1]));
+				vertices.push_back(vertex_P_N_UV(points[p2 - 1], normals[n2 - 1], uvs[uv2 - 1]));
 			}
 			indices.push_back(vertexID[v2]);
 
@@ -91,7 +93,7 @@ Object3D_P_N_UV::Object3D_P_N_UV(const char* file, Texture* texture) : texture(t
 				//not in map
 				vertexID[v3] = maxID;
 				maxID++;
-				vertices.push_back(vertex_P_N_UV(points[p3-1], normals[n3-1], uvs[uv3-1]));
+				vertices.push_back(vertex_P_N_UV(points[p3 - 1], normals[n3 - 1], uvs[uv3 - 1]));
 			}
 			indices.push_back(vertexID[v3]);
 		}
@@ -110,6 +112,7 @@ Object3D_P_N_UV::~Object3D_P_N_UV() {
 #ifdef IMGUI
 	ImGuiManager::removeObject(ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV, this);
 #endif
+	delete material;
 #ifdef DEBUG
 	debug::NB_INSTANCES--;
 #endif
@@ -120,14 +123,15 @@ void Object3D_P_N_UV::setup(Shader* shader, const mat4& p, const mat4& v) {
 	{
 	case ShaderType::DEFAULT_P_N_UV:
 		vao->bind();
-		texture->bind();
-		shader->setUniform("ourTexture", 0);
+		
+		material->setup(shader);
+		
+		
 		
 		shader->setUniform("lightCasterID", lightCasterID, 5);
 		shader->setUniform("mvp", p * v * world * object);
 		shader->setUniform("mv", v * world * object);
 		shader->setUniform("mv_n", normalTransformation(v * world * object));
-		shader->setUniform("specularDensity", specularDensity);
 		break;
 	default:
 #ifdef CONSOLE
@@ -180,7 +184,7 @@ void* Object3D_P_N_UV::getAttribute() const {
 	std::vector<int> tmp = std::vector<int>(maxLight, -1);
 	for (int i = 0; i < maxLight; i++)
 		tmp[i] = lightCasterID[i];
-	imGuiObject3D_P_N_UVAttr* attr = new imGuiObject3D_P_N_UVAttr(texture->getID(), nb_vertex, specularDensity, tmp, Object3D::getAttribute());
+	imGuiObject3D_P_N_UVAttr* attr = new imGuiObject3D_P_N_UVAttr(nb_vertex, tmp, Object3D::getAttribute(), static_cast<void*>(material));
 	return attr;
 }
 
@@ -191,17 +195,13 @@ void Object3D_P_N_UV::updateAttribute(void* attr) const {
 		tmp[i] = lightCasterID[i];
 	}
 		
-	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->textureID = texture->getID();
 	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->nb_vertex = nb_vertex;
-	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->specularDensity = specularDensity;
 	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->lightCasterID = tmp;
 	Object3D::updateAttribute(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->parentAttr);
 
 }
 
 void Object3D_P_N_UV::setAttribute(void* attr) {
-	texture->setID(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->textureID);
-	specularDensity = static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->specularDensity;
 	for (int i = 0; i < maxLight; i++)
 		lightCasterID[i] = static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->lightCasterID[i];
 	Object3D::setAttribute(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->parentAttr);
@@ -209,15 +209,13 @@ void Object3D_P_N_UV::setAttribute(void* attr) {
 }
 
 void Object3D_P_N_UV::imGuiPrintAttribute(void* attr) const {
-	int tmp = static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->textureID;
-	ImGui::InputInt(": TextureID", &tmp);
-	static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->textureID = tmp;
-
-	ImGui::SliderInt(": specular", &static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->specularDensity, 0, 16);
 	ImGui::Text("%d : nb vertex", static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->nb_vertex);
 
 	Object3D::imGuiPrintAttribute(static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->parentAttr);
-
+	if (ImGui::TreeNode("Material")) {
+		material->imGuiPrintAttribute(ImGuiManager::getAttr(material));
+		ImGui::TreePop();
+	}
 	if (ImGui::BeginListBox("listbox 1"))
 	{
 		for (int n = 0; n < static_cast<imGuiObject3D_P_N_UVAttr*>(attr)->lightCasterID.size(); n++)

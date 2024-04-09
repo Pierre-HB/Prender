@@ -15,6 +15,8 @@ const char* imGuiGetObjectName(ImGuiObjectType type) {
 		return "Perspective Camera";
 	case ImGuiObjectType::UTILS_TEXTURE:
 		return "Texture";
+	case ImGuiObjectType::MATERIALS_MATERIAL_AR:
+		return "Material AR";
 	default:
 		return "UNKOWN";
 	}
@@ -31,6 +33,8 @@ const char* imGuiGetObjectName(int typeNumber) {
 		return "Perspective Camera";
 	case static_cast<int>(ImGuiObjectType::UTILS_TEXTURE):
 		return "Texture";
+	case static_cast<int>(ImGuiObjectType::MATERIALS_MATERIAL_AR):
+		return "Material";
 	default:
 		return "UNKOWN";
 	}
@@ -137,13 +141,21 @@ ImGuiManager::ImGuiManager() {
 	textureChilds[0] = texture;
 	ImGuiObjectHierarchy* textureHierarchy = new ImGuiObjectHierarchy("Texture", textureChilds);
 
+	//Material hierarchy =========================================
+	ImGuiObjectHierarchy* material = new ImGuiObjectHierarchy("Material AR", ImGuiObjectType::MATERIALS_MATERIAL_AR);
+
+	std::vector<ImGuiObjectHierarchy*> materialChilds = std::vector<ImGuiObjectHierarchy*>(1);
+	materialChilds[0] = material;
+	ImGuiObjectHierarchy* materialHierarchy = new ImGuiObjectHierarchy("Material", materialChilds);
+
 
 	// Global Hierarchy =======================================
-	std::vector<ImGuiObjectHierarchy*> globalChilds = std::vector<ImGuiObjectHierarchy*>(4);
+	std::vector<ImGuiObjectHierarchy*> globalChilds = std::vector<ImGuiObjectHierarchy*>(5);
 	globalChilds[0] = lightHierarchy;
 	globalChilds[1] = Object3DHierarchy;
 	globalChilds[2] = cameraHierarchy;
 	globalChilds[3] = textureHierarchy;
+	globalChilds[4] = materialHierarchy;
 
 	hierarchy = new ImGuiObjectHierarchy("Instances", globalChilds);
 #ifdef DEBUG
@@ -185,6 +197,16 @@ void ImGuiManager::removeObject(ImGuiObjectType type, ImGuiPrintable* obj) {
 			return;
 		}
 	}
+}
+
+void* ImGuiManager::getAttr(void* obj) {
+	for (size_t i = 0; i < objects.size(); i++) {
+		for (size_t j = 0; j < objects[i].size(); j++) {
+			if (objects[i][j]->obj == obj)
+				return objects[i][j]->attr;
+		}
+	}
+	return nullptr;
 }
 
 void ImGuiManager::setAttributes() {

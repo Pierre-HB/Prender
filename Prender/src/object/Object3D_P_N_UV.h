@@ -4,18 +4,18 @@
 #include "../../Shader.h"
 #include "../utils/Texture.h"
 #include "../light/Light.h"
+#include "../materials/Material_Albedo_Material.h"
 
 #ifdef IMGUI
 //! data for the Object3D_P_N_UV UI
 struct imGuiObject3D_P_N_UVAttr {
-	GLuint textureID;
 	int nb_vertex;
-	int specularDensity;
 	std::vector<int> lightCasterID;
 	void* parentAttr;
+	void* material_ptr;
 
 	//! constructor
-	imGuiObject3D_P_N_UVAttr(GLuint textureID, int nb_vertex, int specularDensity, const std::vector<int>& lightCasterID, void* parentAttr) : textureID(textureID), nb_vertex(nb_vertex), specularDensity(specularDensity), lightCasterID(lightCasterID), parentAttr(parentAttr) {
+	imGuiObject3D_P_N_UVAttr(int nb_vertex, const std::vector<int>& lightCasterID, void* parentAttr, void* material_ptr) : nb_vertex(nb_vertex), lightCasterID(lightCasterID), parentAttr(parentAttr), material_ptr(material_ptr) {
 #ifdef DEBUG
 		debug::NB_ATTR++;
 #endif
@@ -37,10 +37,7 @@ class Object3D_P_N_UV : public Object3D
 {
 private:
 
-	Texture* texture;
-	int specularDensity;
-	//Texture* normal_map;
-	//Texture* material;
+	Material_AR* material;
 	int nb_vertex; //! Do I realy need that ???
 	static const int maxLight = 5; //! maximum number of light affecting this object. IF CHANGED MUST ALSO BE CHANGED IN THE SHADER CODE
 
@@ -48,7 +45,7 @@ public:
 	int lightCasterID[maxLight]; //id of light affecting this object
 
 	//! Construction from an obj
-	Object3D_P_N_UV(const char* file, Texture* texture);
+	Object3D_P_N_UV(const char* file, const char* albedo, const char* roughness);
 
 	//! construction from a set of points, normals, uv and indices
 	Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> normals, std::vector<vec2> uvs, std::vector<int> indexes, Texture* texture);

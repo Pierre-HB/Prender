@@ -21,8 +21,8 @@ in vec3 pos;
 
 out vec4 FragColor;
 
-uniform sampler2D ourTexture;
-uniform sampler2D material;
+uniform sampler2D albedo;
+uniform sampler2D roughness;
 uniform int lightCasterID[5];
 uniform vec4 ambiantColor;
 
@@ -58,14 +58,14 @@ vec3 getLightCasterColor(int lightID, vec3 viewDir, vec3 normal, vec3 position, 
 
 void main()
 {   
-    vec4 obj_material = texture(material, uv);
+    vec4 obj_material = texture(roughness, uv);
     float rougness = obj_material.x*32; //rougness is encoded in a color (so < 1) but is supposed to be in the interval [0, 32]
 
     vec3 cameraPos = vec3(0, 0, 0);
     vec3 viewDir = normalize(pos-cameraPos);
     vec3 normal = normalize(n);
 
-    vec4 objectColor = texture(ourTexture, uv);
+    vec4 objectColor = texture(albedo, uv);
 
     FragColor = objectColor*ambiantColor;
     for(int i = 0; i < 5; i++){
