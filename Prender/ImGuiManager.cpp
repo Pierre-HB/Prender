@@ -17,6 +17,8 @@ const char* imGuiGetObjectName(ImGuiObjectType type) {
 		return "Texture";
 	case ImGuiObjectType::MATERIALS_MATERIAL_AR:
 		return "Material AR";
+	case ImGuiObjectType::SCENE_BASIC_SCENE:
+		return "Basic Scene";
 	default:
 		return "UNKOWN";
 	}
@@ -35,6 +37,8 @@ const char* imGuiGetObjectName(int typeNumber) {
 		return "Texture";
 	case static_cast<int>(ImGuiObjectType::MATERIALS_MATERIAL_AR):
 		return "Material";
+	case static_cast<int>(ImGuiObjectType::SCENE_BASIC_SCENE):
+		return "Basic Scene";
 	default:
 		return "UNKOWN";
 	}
@@ -130,6 +134,7 @@ ImGuiManager::ImGuiManager() {
 	hierarchy->addChild(new ImGuiObjectHierarchy("Camera"), "Instances");
 	hierarchy->addChild(new ImGuiObjectHierarchy("Texture"), "Instances");
 	hierarchy->addChild(new ImGuiObjectHierarchy("Material"), "Instances");
+	hierarchy->addChild(new ImGuiObjectHierarchy("Scene", ImGuiObjectType::SCENE_BASIC_SCENE), "Instances");
 
 	
 	hierarchy->addChild(new ImGuiObjectHierarchy("Light Point Constant", ImGuiObjectType::LIGHT_CONSTANT_POINT), "Lights");

@@ -103,7 +103,7 @@ void main()
     }
 
     ivec2 xy = ivec2(gl_FragCoord.xy);
-    xy /= 2;
+    xy /= 3; //blocks of 3x3 pixel
     int ditheringHash = 4*(xy.x%4) + xy.y%4;
 
     if(obj_material.y >= ditheringMatrix[ditheringHash]){

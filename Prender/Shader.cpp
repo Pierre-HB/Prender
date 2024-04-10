@@ -14,6 +14,8 @@ usedShader get_used_shader(ShaderType shader) {
 		return usedShader(false, false, false, false);
 	case DEFAULT_P_N_UV:
 		return usedShader(true, false, true, false);
+	case DEBUG_TBN:
+		return usedShader(true, true, true, false);
 	default:
 #ifdef CONSOLE
 		std::cout << "[WARNING] used shader for shader type " << shader << " is undefind" << std::endl;
@@ -29,6 +31,8 @@ const char* get_vertex_shader(ShaderType shader) {
 		return "";
 	case DEFAULT_P_N_UV:
 		return "src/shaders/vertexUVShader.glsl";
+	case DEBUG_TBN:
+		return "src/shaders/vertexTBNShader.glsl";
 	default:
 #ifdef CONSOLE
 		std::cout << "[WARNING] vertex shader for shader type " << shader << " is undefind" << std::endl;
@@ -44,6 +48,8 @@ const char* get_geometry_shader(ShaderType shader) {
 		return "";
 	case DEFAULT_P_N_UV:
 		return "";
+	case DEBUG_TBN:
+		return "src/shaders/geometryTBNShader.glsl";
 	default:
 #ifdef CONSOLE
 			std::cout << "[WARNING] geometry shader for shader type " << shader << " is undefind" << std::endl;
@@ -59,6 +65,8 @@ const char* get_fragment_shader(ShaderType shader) {
 		return "";
 	case DEFAULT_P_N_UV:
 		return "src/shaders/fragmentUVShader.glsl";
+	case DEBUG_TBN:
+		return "src/shaders/fragmentTBNShader.glsl";
 	default:
 #ifdef CONSOLE
 		std::cout << "[WARNING] fragment shader for shader type " << shader << " is undefind" << std::endl;
@@ -73,6 +81,8 @@ const char* get_compute_shader(ShaderType shader) {
 	case NO_SHADER:
 		return "";
 	case DEFAULT_P_N_UV:
+		return "";
+	case DEBUG_TBN:
 		return "";
 	default:
 #ifdef CONSOLE

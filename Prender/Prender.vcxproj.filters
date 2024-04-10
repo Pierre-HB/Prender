@@ -280,5 +280,14 @@
     <None Include="src\shaders\fragmentUVShader.glsl">
       <Filter>Fichiers sources\shaders</Filter>
     </None>
+    <None Include="src\shaders\vertexTBNShader.glsl">
+      <Filter>Fichiers sources\shaders</Filter>
+    </None>
+    <None Include="src\shaders\geometryTBNShader.glsl">
+      <Filter>Fichiers sources\shaders</Filter>
+    </None>
+    <None Include="src\shaders\fragmentTBNShader.glsl">
+      <Filter>Fichiers sources\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

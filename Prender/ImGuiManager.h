@@ -17,7 +17,7 @@ class ImGuiManager;
 #include <GLFW/glfw3.h>
 
 //! types of object (to put them in the right place in the instance tree)
-enum class ImGuiObjectType { LIGHT_CONSTANT_POINT, OBJECT_OBJECT3D_DEFAULT_P_N_UV, UTILS_PERSPECTIVE_CAMERA, UTILS_TEXTURE, MATERIALS_MATERIAL_AR, MaxObject };
+enum class ImGuiObjectType { LIGHT_CONSTANT_POINT, OBJECT_OBJECT3D_DEFAULT_P_N_UV, UTILS_PERSPECTIVE_CAMERA, UTILS_TEXTURE, MATERIALS_MATERIAL_AR, SCENE_BASIC_SCENE, MaxObject };
 
 
 

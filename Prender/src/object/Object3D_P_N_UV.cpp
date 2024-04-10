@@ -17,7 +17,7 @@ Object3D_P_N_UV::Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> nor
 }
 
 
-Object3D_P_N_UV::Object3D_P_N_UV(const char* file, const char* albedo, const char* roughness) : material(new Material_AR(albedo, roughness)), nb_vertex(), lightCasterID() {
+Object3D_P_N_UV::Object3D_P_N_UV(const char* file, const char* albedo, const char* roughness) : material(new Material_AR(albedo, roughness)), nb_vertex(), lightCasterID(), indices(), vertices() {
 	std::ifstream inputStream;
 	std::stringstream stream;
 	inputStream.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -42,9 +42,6 @@ Object3D_P_N_UV::Object3D_P_N_UV(const char* file, const char* albedo, const cha
 
 	std::map<std::tuple<int, int, int>, int> vertexID = std::map<std::tuple<int, int, int>, int>();
 	int maxID = 0;
-	std::vector<int> indices = std::vector<int>();
-	std::vector<vertex_P_N_UV> vertices = std::vector<vertex_P_N_UV>();
-
 
 	while (!stream.eof()) {
 		stream.getline(line, max_size);
@@ -126,12 +123,16 @@ void Object3D_P_N_UV::setup(Shader* shader, const mat4& p, const mat4& v) {
 		
 		material->setup(shader);
 		
-		
-		
 		shader->setUniform("lightCasterID", lightCasterID, 5);
 		shader->setUniform("mvp", p * v * world * object);
 		shader->setUniform("mv", v * world * object);
 		shader->setUniform("mv_n", normalTransformation(v * world * object));
+		break;
+	case ShaderType::DEBUG_TBN:
+		vao->bind();
+
+		shader->setUniform("mv", v * world * object);
+		shader->setUniform("p", p);
 		break;
 	default:
 #ifdef CONSOLE
@@ -142,7 +143,20 @@ void Object3D_P_N_UV::setup(Shader* shader, const mat4& p, const mat4& v) {
 }
 
 void Object3D_P_N_UV::draw() {
+	
 	glDrawElements(GL_TRIANGLES, nb_vertex, GL_UNSIGNED_INT, 0);
+
+	
+	
+
+	/*glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(0, -125);
+	glDrawElements(GL_TRIANGLES, nb_vertex, GL_UNSIGNED_INT, 0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glPolygonOffset(0, 0);*/
 }
 
 void Object3D_P_N_UV::setLightCasterID(const std::vector<lightCaster>& lightCasters) {

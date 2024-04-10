@@ -5,7 +5,7 @@
 #include "src/algebra/Algebra.h"
 
 //! the list of shader beeing usable
-enum ShaderType { NO_SHADER, DEFAULT_P_N_UV };
+enum ShaderType { NO_SHADER, DEFAULT_P_N_UV, DEBUG_TBN };
 
 //! set of bool saying if a shader use a vertex/geometry/fragment/compute shader
 struct usedShader

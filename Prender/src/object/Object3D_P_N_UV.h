@@ -41,6 +41,9 @@ private:
 	int nb_vertex; //! Do I realy need that ???
 	static const int maxLight = 5; //! maximum number of light affecting this object. IF CHANGED MUST ALSO BE CHANGED IN THE SHADER CODE
 
+	std::vector<int> indices;
+	std::vector<vertex_P_N_UV> vertices;
+
 public:
 	int lightCasterID[maxLight]; //id of light affecting this object
 
