@@ -103,6 +103,10 @@ private:
 #endif
 
 public:
+
+	static int windowWidth;
+	static int windowHeight;
+
 	keyStates* currentKeyState; // currente action state
 	keyStates* toggleKeyState; // if the action is active and was inactive the previous frame
 

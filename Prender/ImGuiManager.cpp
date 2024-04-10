@@ -40,6 +40,19 @@ const char* imGuiGetObjectName(int typeNumber) {
 	}
 }
 
+bool ImGuiObjectHierarchy::addChild(ImGuiObjectHierarchy* child, const char* parentName) {
+	if (strcmp(parentName, name) == 0) {
+		childs.push_back(child);
+		return true;
+	}
+	for (size_t i = 0; i < childs.size(); i++) {
+		if (childs[i]->addChild(child, parentName))
+			return true;
+	}
+	return false;
+}
+
+
 void ImGuiObjectHierarchy::computeNbInstance() {
 	nbInstance = 0;
 	if (type != ImGuiObjectType::MaxObject)
@@ -111,53 +124,20 @@ std::vector<std::vector<obj_attr*>> ImGuiManager::objects = std::vector<std::vec
 
 ImGuiManager::ImGuiManager() {
 
-	//light hierarchy ===========================================
-	ImGuiObjectHierarchy* lightPointConstant = new ImGuiObjectHierarchy("Light Point Constant", ImGuiObjectType::LIGHT_CONSTANT_POINT);
+	hierarchy = new ImGuiObjectHierarchy("Instances");
+	hierarchy->addChild(new ImGuiObjectHierarchy("Lights"), "Instances");
+	hierarchy->addChild(new ImGuiObjectHierarchy("Object3D"), "Instances");
+	hierarchy->addChild(new ImGuiObjectHierarchy("Camera"), "Instances");
+	hierarchy->addChild(new ImGuiObjectHierarchy("Texture"), "Instances");
+	hierarchy->addChild(new ImGuiObjectHierarchy("Material"), "Instances");
 
-	std::vector<ImGuiObjectHierarchy*> lightChilds = std::vector<ImGuiObjectHierarchy*>(1);
-	lightChilds[0] = lightPointConstant;
-	ImGuiObjectHierarchy* lightHierarchy = new ImGuiObjectHierarchy("Lights", lightChilds);
-
-
-	//Object hierarchy ========================================
-	ImGuiObjectHierarchy* object3dPNUV = new ImGuiObjectHierarchy("Object3D P N UV", ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV);
-
-	std::vector<ImGuiObjectHierarchy*> object3DChilds = std::vector<ImGuiObjectHierarchy*>(1);
-	object3DChilds[0] = object3dPNUV;
-	ImGuiObjectHierarchy* Object3DHierarchy = new ImGuiObjectHierarchy("Object3D", object3DChilds);
-
-
-	//Camera hierarchy =========================================
-	ImGuiObjectHierarchy* perspectiveCamera = new ImGuiObjectHierarchy("Perspective Camera", ImGuiObjectType::UTILS_PERSPECTIVE_CAMERA);
-
-	std::vector<ImGuiObjectHierarchy*> cameraChilds = std::vector<ImGuiObjectHierarchy*>(1);
-	cameraChilds[0] = perspectiveCamera;
-	ImGuiObjectHierarchy* cameraHierarchy = new ImGuiObjectHierarchy("Camera", cameraChilds);
-
-	//Texture hierarchy =========================================
-	ImGuiObjectHierarchy* texture = new ImGuiObjectHierarchy("Texture", ImGuiObjectType::UTILS_TEXTURE);
-
-	std::vector<ImGuiObjectHierarchy*> textureChilds = std::vector<ImGuiObjectHierarchy*>(1);
-	textureChilds[0] = texture;
-	ImGuiObjectHierarchy* textureHierarchy = new ImGuiObjectHierarchy("Texture", textureChilds);
-
-	//Material hierarchy =========================================
-	ImGuiObjectHierarchy* material = new ImGuiObjectHierarchy("Material AR", ImGuiObjectType::MATERIALS_MATERIAL_AR);
-
-	std::vector<ImGuiObjectHierarchy*> materialChilds = std::vector<ImGuiObjectHierarchy*>(1);
-	materialChilds[0] = material;
-	ImGuiObjectHierarchy* materialHierarchy = new ImGuiObjectHierarchy("Material", materialChilds);
-
-
-	// Global Hierarchy =======================================
-	std::vector<ImGuiObjectHierarchy*> globalChilds = std::vector<ImGuiObjectHierarchy*>(5);
-	globalChilds[0] = lightHierarchy;
-	globalChilds[1] = Object3DHierarchy;
-	globalChilds[2] = cameraHierarchy;
-	globalChilds[3] = textureHierarchy;
-	globalChilds[4] = materialHierarchy;
-
-	hierarchy = new ImGuiObjectHierarchy("Instances", globalChilds);
+	
+	hierarchy->addChild(new ImGuiObjectHierarchy("Light Point Constant", ImGuiObjectType::LIGHT_CONSTANT_POINT), "Lights");
+	hierarchy->addChild(new ImGuiObjectHierarchy("Object3D P N UV", ImGuiObjectType::OBJECT_OBJECT3D_DEFAULT_P_N_UV), "Object3D");
+	hierarchy->addChild(new ImGuiObjectHierarchy("Perspective Camera", ImGuiObjectType::UTILS_PERSPECTIVE_CAMERA), "Camera");
+	hierarchy->addChild(new ImGuiObjectHierarchy("Texture", ImGuiObjectType::UTILS_TEXTURE), "Texture");
+	hierarchy->addChild(new ImGuiObjectHierarchy("Material AR", ImGuiObjectType::MATERIALS_MATERIAL_AR), "Material");
+	
 #ifdef DEBUG
 	debug::NB_MAIN_INSTANCES++;
 #endif

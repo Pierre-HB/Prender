@@ -3,10 +3,14 @@
 #include <chrono>
 #include "../../main.h"
 
+int Engine::windowWidth = 800;
+int Engine::windowHeight = 600;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
+    Engine::windowWidth = width;
+    Engine::windowHeight = height;
 }
 
 void processInputCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -33,6 +37,8 @@ void processInputCallback(GLFWwindow* window, int key, int scancode, int action,
 
 GLFWwindow* Engine::initWindows(int width, int height)
 {
+    windowWidth = width;
+    windowHeight = height;
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);

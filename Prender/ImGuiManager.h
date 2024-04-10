@@ -34,6 +34,13 @@ struct ImGuiObjectHierarchy {
 		debug::NB_INSTANCES++;
 #endif
 	}
+
+	//! Node whith no childs
+	ImGuiObjectHierarchy(const char* name) : name(name), childs(), type(ImGuiObjectType::MaxObject), nbInstance() {
+#ifdef DEBUG
+		debug::NB_INSTANCES++;
+#endif
+	}
 	
 	//! Leaf
 	ImGuiObjectHierarchy(const char* name, ImGuiObjectType type) : name(name), childs(), type(type), nbInstance() {
@@ -49,6 +56,9 @@ struct ImGuiObjectHierarchy {
 		debug::NB_INSTANCES--;
 #endif
 	}
+
+	//! add a child to 'parentName'. return true if the parent was found
+	bool addChild(ImGuiObjectHierarchy* child, const char* parentName);
 
 	//! compute the number of instance in this category
 	void computeNbInstance();

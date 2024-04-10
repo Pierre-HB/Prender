@@ -8,7 +8,7 @@
 #ifdef IMGUI
 //! data for the texture UI
 struct imGuiTextureAttr {
-	const GLuint textureID;
+	GLuint textureID;
 	int texture_unit;
 
 	//! Constructor

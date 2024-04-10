@@ -141,16 +141,22 @@ void* Texture::getAttribute() const {
 
 void Texture::updateAttribute(void* attr) const {
 	static_cast<imGuiTextureAttr*>(attr)->texture_unit = texture_unit;
+	static_cast<imGuiTextureAttr*>(attr)->textureID = textureID;
 }
 
 void Texture::setAttribute(void* attr) {
 	texture_unit = static_cast<imGuiTextureAttr*>(attr)->texture_unit;
+	textureID = static_cast<imGuiTextureAttr*>(attr)->textureID;
 }
 
 void Texture::imGuiPrintAttribute(void* attr) const {
-	ImGui::Text("TextureID : %u", static_cast<imGuiTextureAttr*>(attr)->textureID);
+	int tmp = static_cast<imGuiTextureAttr*>(attr)->textureID;
+	//ImGui::Text("TextureID : %u", static_cast<imGuiTextureAttr*>(attr)->textureID);
+	ImGui::InputInt("TextureID", &tmp);
+	static_cast<imGuiTextureAttr*>(attr)->textureID = tmp;
 
-	ImGui::InputInt("Texture unit", &static_cast<imGuiTextureAttr*>(attr)->texture_unit);
+	ImGui::Text("Texture unit : %u", static_cast<imGuiTextureAttr*>(attr)->texture_unit);
+	//ImGui::InputInt("Texture unit", &static_cast<imGuiTextureAttr*>(attr)->texture_unit);
 
 	//ImGui::Image((void*)(intptr_t)static_cast<imGuiTextureAttr*>(attr)->textureID, ImVec2(64, 64));
 	ImGui::Image((void*)(intptr_t)static_cast<imGuiTextureAttr*>(attr)->textureID, ImVec2(128, 128));

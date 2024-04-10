@@ -67,7 +67,7 @@ void BasicScene::render() {
     shader_test->use();
     lightManager->loadAmbiant(shader_test);
     object->setup(shader_test, camera->getProjectionMatrix(), camera->getViewMatrix());
-
+    shader_test->setUniform("dimensions", ivec2(Engine::windowWidth, Engine::windowHeight));
     //texture_smiley->bind();
     //debugMaterial->bind();
     //shader_test->setUniform("roughness", 1); // TODO Create a Material class that will handle the albedo/normal map/material texture
