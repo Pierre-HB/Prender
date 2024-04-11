@@ -13,10 +13,11 @@ struct vertex_P_N_UV
 {
 	vec3 point;
 	vec3 normal;
+	vec3 tangeant;
 	vec2 uv;
 
 	//! construction of a vertex (Point Normal UV) from a point, a normal and a uv
-	vertex_P_N_UV(const vec3& point, const vec3& normal, const vec2& uv) : point(point), normal(normal), uv(uv){}
+	vertex_P_N_UV(const vec3& point, const vec3& normal, const vec2& uv) : point(point), normal(normal), tangeant(vec3(0, 0, 0)), uv(uv) {}
 };
 
 //! Vertex Array Object

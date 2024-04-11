@@ -9,10 +9,11 @@
 //! data for the Material_AR UI
 struct imGuiMaterial_AR_Attr {
 	void* albedo;
-	void* rougness;
+	void* normal_map;
+	void* roughness;
 
 	//! constructor
-	imGuiMaterial_AR_Attr(void* albedo, void* rougness) : albedo(albedo), rougness(rougness) {
+	imGuiMaterial_AR_Attr(void* albedo, void* normal_map, void* roughness) : albedo(albedo), roughness(roughness) {
 #ifdef DEBUG
 		debug::NB_ATTR++;
 #endif
@@ -35,11 +36,12 @@ class Material_AR
 private:
 
 	Texture* albedo;
+	Texture* normal_map;
 	Texture* roughness;
 
 public:
 	//! construction from the albedo and roughness files
-	Material_AR(const char* albedo, const char* roughness);
+	Material_AR(const char* albedo, const char* normal_map, const char* roughness);
 
 	//! destructor
 	~Material_AR();

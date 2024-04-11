@@ -3,7 +3,7 @@
 
 //we set the albedo texture on the texture unit 0
 //we set the roughness texture on the texture unit 1
-Material_AR::Material_AR(const char* albedo, const char* roughness) : albedo(new Texture(albedo, 0)), roughness(new Texture(roughness, 1)) {
+Material_AR::Material_AR(const char* albedo, const char* normal_map, const char* roughness) : albedo(new Texture(albedo, 0)), normal_map(new Texture(normal_map, 2)), roughness(new Texture(roughness, 1)) {
 #ifdef IMGUI
 	ImGuiManager::addObject(ImGuiObjectType::MATERIALS_MATERIAL_AR, this);
 #endif
@@ -14,6 +14,7 @@ Material_AR::Material_AR(const char* albedo, const char* roughness) : albedo(new
 
 Material_AR::~Material_AR() {
 	delete albedo;
+	delete normal_map;
 	delete roughness;
 #ifdef IMGUI
 	ImGuiManager::removeObject(ImGuiObjectType::MATERIALS_MATERIAL_AR, this);
@@ -29,8 +30,10 @@ void Material_AR::setup(Shader* shader) {
 	case ShaderType::DEFAULT_P_N_UV:
 		albedo->bind();
 		roughness->bind();
+		normal_map->bind();
 		shader->setUniform("albedo", 0);
 		shader->setUniform("roughness", 1);
+		shader->setUniform("normal_map", 2);
 		break;
 	default:
 #ifdef CONSOLE
@@ -42,7 +45,7 @@ void Material_AR::setup(Shader* shader) {
 
 #ifdef IMGUI
 void* Material_AR::getAttribute() const {
-	return new imGuiMaterial_AR_Attr(albedo, roughness);
+	return new imGuiMaterial_AR_Attr(albedo, normal_map, roughness);
 }
 
 void Material_AR::updateAttribute(void* attr) const {
@@ -56,6 +59,10 @@ void Material_AR::setAttribute(void* attr) {
 void Material_AR::imGuiPrintAttribute(void* attr) const {
 	if (ImGui::TreeNode("albedo")) {
 		albedo->imGuiPrintAttribute(ImGuiManager::getAttr(albedo));
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("normal map")) {
+		normal_map->imGuiPrintAttribute(ImGuiManager::getAttr(normal_map));
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("roughness")) {

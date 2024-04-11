@@ -11,6 +11,7 @@ BasicScene::BasicScene() {
     debug = new Texture("debug.jpeg", 0);
     texture = new Texture("container.jpg", 0);
     texture_smiley = new Texture("awesomeface.png", 2);
+    normal_gravier = new Texture("normal.jpg", 2);
 
     debugMaterial = Texture::createDebugMaterial(512, 512, 1);
     //debugMaterial = Texture::createDebugMaterial(16, 16, 2);
@@ -21,7 +22,12 @@ BasicScene::BasicScene() {
     
     camera = new PerspectiveCamera(800.0f / 600.0f, 3.14f/2, 0.1f, 1000.0f, translationMatrix(vec3(0, 0, 30)));
 
-    object = new Object3D_P_N_UV("models/teapot.obj", "container.jpg", "roughness.png");
+    //object = new Object3D_P_N_UV("models/teapot.obj", "container.jpg", "roughness.png");
+    // 
+    object = new Object3D_P_N_UV("models/teapot.obj", new Material_AR("brickwall.jpg", "brickwall_normal.jpg", "roughness.png"));
+    //object = new Object3D_P_N_UV("models/teapot.obj", new Material_AR("brickwall.jpg", "normal.jpg", "roughness.png"));
+
+    
     //object = new Object3D_P_N_UV("models/teapot.obj", texture);
 
 
@@ -47,6 +53,7 @@ BasicScene::BasicScene() {
 BasicScene::~BasicScene() {
     delete texture;
     delete texture_smiley;
+    delete normal_gravier;
     delete debug;
     delete shader_test;
     delete shader_tbn;

@@ -44,6 +44,7 @@ private:
 	Texture* texture_smiley;
 	Texture* debug;
 	Texture* debugMaterial;
+	Texture* normal_gravier;
 	Shader* shader_test;
 	Shader* shader_tbn;
 	PerspectiveCamera* camera;

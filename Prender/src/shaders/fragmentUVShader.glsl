@@ -17,11 +17,13 @@ layout (std140) uniform lightCastersBlock
 
 in vec2 uv;
 in vec3 n;
+in vec3 tangeant;
 in vec3 pos;
 
 out vec4 FragColor;
 
 uniform sampler2D albedo;
+uniform sampler2D normal_map;
 uniform sampler2D roughness;
 uniform int lightCasterID[5];
 uniform vec4 ambiantColor;
@@ -94,8 +96,13 @@ void main()
     vec3 cameraPos = vec3(0, 0, 0);
     vec3 viewDir = normalize(pos-cameraPos);
     vec3 normal = normalize(n);
+    vec3 tang = normalize(cross(cross(n, tangeant), n)); // Gram smidtz
+    vec3 bitang = cross(normal, tang);
 
     vec4 objectColor = texture(albedo, uv);
+    vec4 normal_tex = texture(normal_map, uv);
+
+    normal = normalize(tang*(2*normal_tex.r-1) + bitang*(2*normal_tex.g-1) + normal*(2*normal_tex.b-1));
 
     FragColor = objectColor*ambiantColor;
     for(int i = 0; i < 5; i++){
@@ -115,4 +122,6 @@ void main()
     //FragColor = vec4(gl_FragCoord.xy/vec2(dimensions), 0, 1);
     //FragColor = vec4((normal+vec3(1, 1, 1)/2), 1);
     //FragColor = obj_material;
+    //FragColor = normal_tex;
+    //FragColor = vec4(tangeant, 1);
 };

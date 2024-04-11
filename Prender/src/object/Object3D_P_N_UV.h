@@ -48,7 +48,8 @@ public:
 	int lightCasterID[maxLight]; //id of light affecting this object
 
 	//! Construction from an obj
-	Object3D_P_N_UV(const char* file, const char* albedo, const char* roughness);
+	//Object3D_P_N_UV(const char* file, const char* albedo, const char* roughness);
+	Object3D_P_N_UV(const char* file, Material_AR* material);
 
 	//! construction from a set of points, normals, uv and indices
 	Object3D_P_N_UV(std::vector<vec3> points, std::vector<vec3> normals, std::vector<vec2> uvs, std::vector<int> indexes, Texture* texture);
