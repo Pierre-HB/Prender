@@ -135,12 +135,26 @@ void BasicScene::update(Engine* engine) {
     if (engine->currentKeyState->right)
         camera->moveView(translationMatrix(vec3(s, 0, 0)));
 
-    /*if (engine->toggleKeyState->forward) {
-        std::vector<Light*> lights = lightManager->getLights();
-        lightManager->removeLight(lights[0]);
+    if (engine->currentKeyState->mouseRight && (engine->currentKeyState->mouseDeltaX != 0 || engine->currentKeyState->mouseDeltaY != 0)) {
+        float alpha = 2 * 3.1415 / 500; //angular speed for the camera
 
-        lights = lightManager->getLights();
-    }*/
+        vec4 mouseMoove = vec4(-engine->currentKeyState->mouseDeltaY, -engine->currentKeyState->mouseDeltaX, 0, 0);
+        // put a minus in front of deltaX because the control are reverse otherwise
+
+        float d = length(mouseMoove);
+
+        //extract the camera rotation (there should not be any scale in this matrix, so this code is OK)
+        mat4 tmp = camera->getViewMatrix();
+        tmp.c[3] = 0;
+        tmp.c[7] = 0;
+        tmp.c[11] = 0;
+        mouseMoove = transpose(tmp) * inverse(camera->getProjectionMatrix())*mouseMoove;
+        vec3 u = normalize(vec3(mouseMoove.x, mouseMoove.y, mouseMoove.z));
+
+        mat4 rot = rotationMatrix(d * alpha, u);
+        camera->moveView(rot);
+
+    }
 
     object->setLightCasterID(lightManager->getLightCasters());
 }

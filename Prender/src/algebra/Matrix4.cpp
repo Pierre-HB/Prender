@@ -306,6 +306,16 @@ mat4 rotationMatrixZ(float a) {
                 0, 0, 0, 1);
 }
 
+mat4 rotationMatrix(float a, const vec3& u) {
+    float c = cosf(a);
+    float s = sinf(a);
+    float _c = 1-c;
+    return mat4(c + u.x * u.x * _c,       u.x * u.y * _c - u.z * s, u.x * u.z * _c + u.y * s, 0,
+                u.y * u.x * _c + u.z * s, c + u.y * u.y * _c,       u.y * u.z * _c - u.x * s, 0,
+                u.z * u.x * _c - u.y * s, u.z * u.y * _c + u.x * s, c + u.z * u.z * _c,       0,
+                0,                        0,                        0,                        1);
+}
+
 mat4 translationMatrix(const vec3& v) {
     return mat4(1, 0, 0, v.x,
                 0, 1, 0, v.y,

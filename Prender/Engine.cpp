@@ -35,6 +35,22 @@ void processInputCallback(GLFWwindow* window, int key, int scancode, int action,
         Engine::bufferKeyState->left = false;
 }
 
+void processMouseCursorCallback(GLFWwindow* window, double xpos, double ypos) {
+    Engine::bufferKeyState->mouseX = static_cast<int>(xpos);
+    Engine::bufferKeyState->mouseY = static_cast<int>(ypos);
+}
+
+void processMouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+        Engine::bufferKeyState->mouseRight = true;
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
+        Engine::bufferKeyState->mouseRight = false;
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+        Engine::bufferKeyState->mouseLeft = true;
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+        Engine::bufferKeyState->mouseLeft = false;
+}
+
 GLFWwindow* Engine::initWindows(int width, int height)
 {
     windowWidth = width;
@@ -68,6 +84,8 @@ GLFWwindow* Engine::initWindows(int width, int height)
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetKeyCallback(window, processInputCallback);
+    glfwSetCursorPosCallback(window, processMouseCursorCallback);
+    glfwSetMouseButtonCallback(window, processMouseButtonCallback);
 
     return window;
 }
@@ -89,12 +107,24 @@ void Engine::updateInput() {
     currentKeyState->backward = bufferKeyState->backward;
     currentKeyState->left = bufferKeyState->left;
     currentKeyState->right = bufferKeyState->right;
+
+    currentKeyState->mouseLeft = bufferKeyState->mouseLeft;
+    currentKeyState->mouseRight = bufferKeyState->mouseRight;
+    currentKeyState->mouseX = bufferKeyState->mouseX;
+    currentKeyState->mouseY = bufferKeyState->mouseY;
+
+    currentKeyState->mouseDeltaX = currentKeyState->mouseX - previousKeyState->mouseX;
+    currentKeyState->mouseDeltaY = currentKeyState->mouseY - previousKeyState->mouseY;
+
     
     //update the toggle key state
     toggleKeyState->forward = currentKeyState->forward && !previousKeyState->forward;
     toggleKeyState->backward = currentKeyState->backward && !previousKeyState->backward;
     toggleKeyState->left = currentKeyState->left && !previousKeyState->left;
     toggleKeyState->right = currentKeyState->right && !previousKeyState->right;
+
+    currentKeyState->mouseLeft = currentKeyState->mouseLeft && !previousKeyState->mouseLeft;
+    currentKeyState->mouseRight = currentKeyState->mouseRight && !previousKeyState->mouseRight;
 }
 
 keyStates* Engine::bufferKeyState = new keyStates();

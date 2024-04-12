@@ -120,6 +120,9 @@ mat4 rotationMatrixY(float a);
 //! rotation of a radian around the Z axis
 mat4 rotationMatrixZ(float a);
 
+//! rotation of a radian around the u vector. u MUST be normalized
+mat4 rotationMatrix(float a, const vec3& u);
+
 //! translation by a vector v
 mat4 translationMatrix(const vec3& v);
 

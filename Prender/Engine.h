@@ -62,7 +62,14 @@ struct keyStates
 	bool left;
 	bool right;
 
-	keyStates() : forward(false), backward(false), left(false), right(false) {
+	bool mouseLeft;
+	bool mouseRight;
+	int mouseX;
+	int mouseY;
+	int mouseDeltaX;
+	int mouseDeltaY;
+
+	keyStates() : forward(false), backward(false), left(false), right(false), mouseLeft(false), mouseRight(false), mouseX(0), mouseY(0), mouseDeltaX(0), mouseDeltaY(0) {
 #ifdef DEBUG
 		debug::NB_INSTANCES++;
 #endif
